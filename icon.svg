@@ -1,1 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><linearGradient id="g" x2="1" y2="1"><stop stop-color="#f6d27a"/><stop offset="1" stop-color="#95651d"/></linearGradient></defs><rect width="512" height="512" rx="110" fill="#080b14"/><path d="M256 38 430 105v125c0 112-72 193-174 244C154 423 82 342 82 230V105z" fill="#111a2a" stroke="url(#g)" stroke-width="13"/><path d="m160 145 23-38 29 25 44-39 44 39 29-25 23 38" fill="none" stroke="url(#g)" stroke-width="13" stroke-linecap="round"/><path d="M153 270c8-71 47-108 103-108s95 37 103 108l-38-23-25 41-40-27-40 27-25-41z" fill="url(#g)" opacity=".95"/><text x="256" y="365" text-anchor="middle" font-family="Georgia,serif" font-size="100" font-weight="bold" fill="url(#g)">ECG</text><path d="M120 405h272" stroke="url(#g)" stroke-width="7"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f0d99a"/><stop offset=".5" stop-color="#b58b43"/><stop offset="1" stop-color="#6d4b1e"/></linearGradient><linearGradient id="s" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#dce0e4"/><stop offset="1" stop-color="#69727d"/></linearGradient></defs>
+<rect width="512" height="512" rx="88" fill="#080b12"/><path d="M256 28 442 99v133c0 116-78 205-186 252C148 437 70 348 70 232V99Z" fill="#111722" stroke="url(#g)" stroke-width="12"/>
+<path d="M256 76v300M211 122h90" stroke="url(#s)" stroke-width="9" stroke-linecap="round"/>
+<path d="M115 210Q170 118 231 184M397 210Q342 118 281 184" fill="none" stroke="url(#s)" stroke-width="12" stroke-linecap="round"/>
+<path d="m256 142 39 28 43-5 7 44 32 30-24 38 5 43-45 8-26 35-38-24-39 24-26-35-45-8 5-43-24-38 32-30 7-44 43 5Z" fill="url(#g)"/>
+<path d="M193 232q27-27 63-9 36-18 63 9l-16 56q-10 38-47 51-37-13-47-51Z" fill="#151a22" stroke="#ead5a6" stroke-width="6"/>
+<path d="m203 231 33 8m73-8-33 8" stroke="#f4e4c2" stroke-width="8" stroke-linecap="round"/>
+<path d="m242 274 14-8 14 8-14 12Z" fill="#d5b36d"/><path d="M256 286q-13 15-25 7m25-7q13 15 25 7" fill="none" stroke="#e9d7b2" stroke-width="5"/>
+<text x="256" y="423" text-anchor="middle" font-family="Georgia,serif" font-size="60" font-weight="bold" fill="url(#g)">ECG</text>
+</svg>
