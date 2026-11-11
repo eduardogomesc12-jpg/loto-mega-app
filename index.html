@@ -51,7 +51,18 @@ let dr=delay.map((v,i)=>({n:i+1,v})).sort((x,y)=>y.v-x.v||x.n-y.n);$('overdue').
 $('frequency').innerHTML=f.map((v,i)=>`<div class="num ${ranking.slice(0,5).some(x=>x.n===i+1)?'hot':''} ${dr.slice(0,5).some(x=>x.n===i+1)?'cold':''}"><b>${fmt(i+1)}</b><br><small>${v}x</small></div>`).join('');renderComparisons()}
 function weightedPick(pool,weights){let sum=pool.reduce((s,n)=>s+weights[n-1],0),r=Math.random()*sum;for(let i=0;i<pool.length;i++){r-=weights[pool[i]-1];if(r<=0)return pool.splice(i,1)[0]}return pool.pop()}
 function scoreProfile(){
- const c=C[mode],arr=selected(),full=all[mode],periods=[100,50,30,20,15,10];
+ const c=C[mode],full=all[mode];
+ if(mode==='lotofacil'){
+  // Reprodução literal da aba SCORE DEZENAS: B=histórico, C=30, D=20,
+  // E=15, F=10, G=100; normalização independente pelo máximo de cada coluna.
+  const count=a=>{let f=Array(25).fill(0);a.forEach(d=>d.dezenas.forEach(n=>{if(Number.isInteger(n)&&n>=1&&n<=25)f[n-1]++}));return f};
+  const cols=[count(full),count(full.slice(0,30)),count(full.slice(0,20)),count(full.slice(0,15)),count(full.slice(0,10)),count(full.slice(0,100))];
+  const maxima=cols.map(col=>Math.max(1,...col));
+  const weights=[.35,.20,.15,.10,.10,.10];
+  return Array.from({length:25},(_,i)=>{const score=weights.reduce((sum,w,j)=>sum+w*(cols[j][i]/maxima[j])*100,0);return {n:i+1,score:Math.round((score+Number.EPSILON)*100)/100,freq:cols[0][i],delay:null,components:cols.map((col,j)=>Math.round((col[i]/maxima[j])*10000)/100)}});
+ }
+ // Mega-Sena não faz parte da planilha original: modelo separado e heurístico.
+ const arr=selected(),periods=[100,50,30,20,15,10];
  const count=a=>{let f=Array(c.max).fill(0);a.forEach(d=>d.dezenas.forEach(n=>{if(n>=1&&n<=c.max)f[n-1]++}));return f};
  const long=count(full),wins={};periods.forEach(k=>wins[k]=count(full.slice(0,k)));
  const chosen=Number($('filter').value)||100,short=wins[chosen]||count(arr),max=a=>Math.max(1,...a);
@@ -60,24 +71,50 @@ function scoreProfile(){
  return Array.from({length:c.max},(_,i)=>({n:i+1,score:.65*norm(short[i],max(short))+.20*norm(long[i],max(long))+.15*norm(Math.max(0,arr.length-delay[i]),Math.max(1,arr.length)),freq:short[i],delay:delay[i]}));
 }
 function candidateScore(g,profile,history){
- const c=C[mode],by=new Map(profile.map(x=>[x.n,x]));
- const base=g.reduce((s,n)=>s+by.get(n).score,0)/g.length;
+ const by=new Map(profile.map(x=>[x.n,x]));
+ if(mode==='lotofacil'){
+  // GERADOR DE JOGOS!Q:T e RANKING DE JOGOS!F:G.
+  const base=g.reduce((sum,n)=>sum+(by.get(n)?.score||0),0);
+  const evens=g.filter(n=>n%2===0).length;
+  const sum=g.reduce((a,n)=>a+n,0);
+  const latest=all.lotofacil[0];
+  const repeats=latest?g.filter(n=>latest.dezenas.includes(n)).length:0;
+  const structural=[
+   Math.max(0,100-Math.abs(evens-7.5)*20),
+   Math.max(0,100-Math.abs(sum-195)*1.2),
+   Math.max(0,100-Math.abs(repeats-9)*12)
+  ].reduce((a,b)=>a+b,0)/3;
+  return Math.round((base*.7+structural*.3+Number.EPSILON)*100)/100;
+ }
+ const c=C[mode],base=g.reduce((s,n)=>s+by.get(n).score,0)/g.length;
  const odds=g.filter(n=>n%2).length,oddTarget=c.draw/2;
  const sum=g.reduce((s,n)=>s+n,0),mean=history.length?history.reduce((s,d)=>s+d.dezenas.reduce((a,n)=>a+n,0),0)/history.length:c.draw*(c.max+1)/2;
- const bands=mode==='lotofacil'?5:6,counts=Array(bands).fill(0);g.forEach(n=>counts[Math.min(bands-1,Math.floor((n-1)/(c.max/bands)))]++);
+ const bands=6,counts=Array(bands).fill(0);g.forEach(n=>counts[Math.min(bands-1,Math.floor((n-1)/(c.max/bands)))]++);
  const spreadPenalty=counts.reduce((s,v)=>s+Math.abs(v-c.draw/bands),0)*2.3;
  const structure=Math.max(0,100-Math.abs(odds-oddTarget)*8-Math.abs(sum-mean)/Math.max(1,mean)*65-spreadPenalty);
  return base*.78+structure*.22;
 }
 function makeGames(){
- const c=C[mode],qty=Math.max(1,Math.min(10,Number($('gamecount').value)||5)),profile=scoreProfile(),history=selected();
- const weights=profile.map(x=>Math.max(.2,x.score)),candidates=new Map();
- for(let t=0;t<900;t++){
-  let pool=Array.from({length:c.max},(_,i)=>i+1),g=[];
-  while(g.length<c.draw){let total=pool.reduce((s,n)=>s+weights[n-1],0),r=Math.random()*total,idx=0;for(;idx<pool.length;idx++){r-=weights[pool[idx]-1];if(r<=0)break}g.push(pool.splice(Math.min(idx,pool.length-1),1)[0]);}
-  g.sort((a,b)=>a-b);const key=g.join('-');if(!candidates.has(key))candidates.set(key,{dezenas:g,score:candidateScore(g,profile,history)});
+ const c=C[mode],qty=Math.max(1,Math.min(10,Number($('gamecount').value)||3)),profile=scoreProfile(),history=selected();
+ const candidates=[];
+ if(mode==='lotofacil'){
+  // A planilha cria 100 candidatos com RAND()^(1/MAX(0.01,score)),
+  // seleciona as 15 maiores chaves e classifica pelo score final.
+  for(let t=0;t<100;t++){
+   const keys=profile.map(x=>({n:x.n,key:Math.pow(Math.random(),1/Math.max(.01,x.score))}));
+   const g=keys.sort((a,b)=>b.key-a.key).slice(0,15).map(x=>x.n).sort((a,b)=>a-b);
+   candidates.push({dezenas:g,score:candidateScore(g,profile,history)});
+  }
+ }else{
+  const weights=profile.map(x=>Math.max(.2,x.score)),unique=new Map();
+  for(let t=0;t<900;t++){
+   let pool=Array.from({length:c.max},(_,i)=>i+1),g=[];
+   while(g.length<c.draw){let total=pool.reduce((s,n)=>s+weights[n-1],0),r=Math.random()*total,idx=0;for(;idx<pool.length;idx++){r-=weights[pool[idx]-1];if(r<=0)break}g.push(pool.splice(Math.min(idx,pool.length-1),1)[0]);}
+   g.sort((a,b)=>a-b);const key=g.join('-');if(!unique.has(key))unique.set(key,{dezenas:g,score:candidateScore(g,profile,history)});
+  }
+  candidates.push(...unique.values());
  }
- return [...candidates.values()].sort((a,b)=>b.score-a.score).slice(0,qty);
+ return candidates.sort((a,b)=>b.score-a.score).slice(0,qty);
 }
 async function generate(){say('Gerando combinações…');let gs=makeGames(),latest=all[mode][0];for(let item of gs){let g=item.dezenas,hits=latest?g.filter(n=>latest.dezenas.includes(n)).length:null;let obj={game:mode,created:new Date().toISOString(),dezenas:g,score:item.score,lastContest:latest?.concurso||null,lastHits:hits};let r=await tx('games','add',obj);savedGames.push({...obj,id:r})}render();$('gamesinfo').textContent=`${gs.length.toLocaleString('pt-BR')} jogos salvos neste aparelho. Último concurso comparado: ${latest?.concurso||'ainda não disponível'}.`;let recent=savedGames.filter(x=>x.game===mode).slice(-Math.min(gs.length,20)).reverse();$('games').innerHTML=recent.map((x,i)=>`<div class="game"><div class="top"><span class="muted">Jogo ${i+1} · Score ${Number(x.score||0).toFixed(1)}</span><span class="pill">${x.lastHits===null?'Aguardando resultado':x.lastHits+' acertos no concurso '+x.lastContest}</span></div><div class="balls">${balls(x.dezenas)}</div></div>`).join('')+`<small>Exibindo até 20 jogos do lote mais recente. Todos os ${gs.length} foram salvos.</small>`;say('Jogos gerados e salvos.')}
 function renderComparisons(){let list=savedGames.filter(x=>x.game===mode);let latest=all[mode][0];if(!list.length){$('comparison').textContent='Ainda não há jogos salvos para conferir.';return}if(!latest){$('comparison').textContent=`${list.length} jogos guardados; aguardando resultado.`;return}
