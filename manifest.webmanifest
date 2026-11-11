@@ -1,18 +1,16 @@
 {
-  "name": "Loto & Mega — Análises e Jogos",
-  "short_name": "Loto & Mega",
+  "name": "ECG Loto & Mega",
+  "short_name": "ECG Loto",
+  "description": "Painel estatístico e gerador de jogos Lotofácil e Mega-Sena",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#0b1020",
-  "theme_color": "#0b1020",
-  "description": "Estatísticas, histórico e conferência para Lotofácil e Mega-Sena.",
+  "background_color": "#080b14",
+  "theme_color": "#080b14",
+  "lang": "pt-BR",
   "icons": [
-    {
-      "src": "icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any"
-    }
+    {"src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"},
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
   ]
 }
