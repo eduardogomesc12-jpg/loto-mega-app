@@ -52,31 +52,25 @@ $('frequency').innerHTML=f.map((v,i)=>`<div class="num ${ranking.slice(0,5).some
 function weightedPick(pool,weights){let sum=pool.reduce((s,n)=>s+weights[n-1],0),r=Math.random()*sum;for(let i=0;i<pool.length;i++){r-=weights[pool[i]-1];if(r<=0)return pool.splice(i,1)[0]}return pool.pop()}
 function scoreProfile(){
  const c=C[mode],full=all[mode];
- if(mode==='lotofacil'){
-  // Reprodução literal da aba SCORE DEZENAS: B=histórico, C=30, D=20,
-  // E=15, F=10, G=100; normalização independente pelo máximo de cada coluna.
-  const count=a=>{let f=Array(25).fill(0);a.forEach(d=>d.dezenas.forEach(n=>{if(Number.isInteger(n)&&n>=1&&n<=25)f[n-1]++}));return f};
-  const cols=[count(full),count(full.slice(0,30)),count(full.slice(0,20)),count(full.slice(0,15)),count(full.slice(0,10)),count(full.slice(0,100))];
-  const maxima=cols.map(col=>Math.max(1,...col));
-  const weights=[.35,.20,.15,.10,.10,.10];
-  return Array.from({length:25},(_,i)=>{const score=weights.reduce((sum,w,j)=>sum+w*(cols[j][i]/maxima[j])*100,0);return {n:i+1,score:Math.round((score+Number.EPSILON)*100)/100,freq:cols[0][i],delay:null,components:cols.map((col,j)=>Math.round((col[i]/maxima[j])*10000)/100)}});
- }
- // Mega-Sena não faz parte da planilha original: modelo separado e heurístico.
- const arr=selected(),periods=[100,50,30,20,15,10];
- const count=a=>{let f=Array(c.max).fill(0);a.forEach(d=>d.dezenas.forEach(n=>{if(n>=1&&n<=c.max)f[n-1]++}));return f};
- const long=count(full),wins={};periods.forEach(k=>wins[k]=count(full.slice(0,k)));
- const chosen=Number($('filter').value)||100,short=wins[chosen]||count(arr),max=a=>Math.max(1,...a);
- const delay=Array(c.max).fill(arr.length);let seen=Array(c.max).fill(false);arr.forEach((d,i)=>d.dezenas.forEach(n=>{if(!seen[n-1]){delay[n-1]=i;seen[n-1]=true}}));
- const norm=(v,m)=>v/Math.max(1,m)*100;
- return Array.from({length:c.max},(_,i)=>({n:i+1,score:.65*norm(short[i],max(short))+.20*norm(long[i],max(long))+.15*norm(Math.max(0,arr.length-delay[i]),Math.max(1,arr.length)),freq:short[i],delay:delay[i]}));
+ // Mesma ponderação para as duas modalidades: 35/20/15/10/10/10.
+ // Cada janela é normalizada pelo maior número de ocorrências da própria janela.
+ const count=a=>{let f=Array(c.max).fill(0);a.forEach(d=>d.dezenas.forEach(n=>{if(Number.isInteger(n)&&n>=1&&n<=c.max)f[n-1]++}));return f};
+ const cols=[count(full),count(full.slice(0,30)),count(full.slice(0,20)),count(full.slice(0,15)),count(full.slice(0,10)),count(full.slice(0,100))];
+ const maxima=cols.map(col=>Math.max(1,...col));
+ const weights=[.35,.20,.15,.10,.10,.10];
+ return Array.from({length:c.max},(_,i)=>{
+  const score=weights.reduce((sum,w,j)=>sum+w*(cols[j][i]/maxima[j])*100,0);
+  return {n:i+1,score:Math.round((score+Number.EPSILON)*100)/100,freq:cols[0][i],delay:null,components:cols.map((col,j)=>Math.round((col[i]/maxima[j])*10000)/100)};
+ });
 }
 function candidateScore(g,profile,history){
  const by=new Map(profile.map(x=>[x.n,x]));
+ const base=g.reduce((sum,n)=>sum+(by.get(n)?.score||0),0);
+ const evens=g.filter(n=>n%2===0).length;
+ const sum=g.reduce((a,n)=>a+n,0);
+ const parityScore=Math.max(0,100-Math.abs(evens-C[mode].draw/2)*20);
  if(mode==='lotofacil'){
-  // GERADOR DE JOGOS!Q:T e RANKING DE JOGOS!F:G.
-  const base=g.reduce((sum,n)=>sum+(by.get(n)?.score||0),0);
-  const evens=g.filter(n=>n%2===0).length;
-  const sum=g.reduce((a,n)=>a+n,0);
+  // Mantém a regra original da planilha para Lotofácil.
   const latest=all.lotofacil[0];
   const repeats=latest?g.filter(n=>latest.dezenas.includes(n)).length:0;
   const structural=[
@@ -86,33 +80,33 @@ function candidateScore(g,profile,history){
   ].reduce((a,b)=>a+b,0)/3;
   return Math.round((base*.7+structural*.3+Number.EPSILON)*100)/100;
  }
- const c=C[mode],base=g.reduce((s,n)=>s+by.get(n).score,0)/g.length;
- const odds=g.filter(n=>n%2).length,oddTarget=c.draw/2;
- const sum=g.reduce((s,n)=>s+n,0),mean=history.length?history.reduce((s,d)=>s+d.dezenas.reduce((a,n)=>a+n,0),0)/history.length:c.draw*(c.max+1)/2;
- const bands=6,counts=Array(bands).fill(0);g.forEach(n=>counts[Math.min(bands-1,Math.floor((n-1)/(c.max/bands)))]++);
- const spreadPenalty=counts.reduce((s,v)=>s+Math.abs(v-c.draw/bands),0)*2.3;
- const structure=Math.max(0,100-Math.abs(odds-oddTarget)*8-Math.abs(sum-mean)/Math.max(1,mean)*65-spreadPenalty);
- return base*.78+structure*.22;
+ // Mega-Sena: calibração com o histórico disponível, sem impor soma fixa.
+ const sums=history.map(d=>d.dezenas.reduce((a,n)=>a+n,0));
+ const mean=sums.length?sums.reduce((a,n)=>a+n,0)/sums.length:C[mode].draw*(C[mode].max+1)/2;
+ const variance=sums.length?sums.reduce((a,n)=>a+(n-mean)**2,0)/sums.length:1;
+ const sd=Math.sqrt(Math.max(1,variance));
+ const sumScore=Math.max(0,100- Math.abs(sum-mean)/sd*18);
+ let repeatCounts=[];
+ for(let i=0;i<history.length-1;i++){
+  const prev=new Set(history[i+1].dezenas);
+  repeatCounts.push(history[i].dezenas.filter(n=>prev.has(n)).length);
+ }
+ const repeatMean=repeatCounts.length?repeatCounts.reduce((a,n)=>a+n,0)/repeatCounts.length:0.6;
+ const latest=history[0]||all.megasena[0];
+ const repeats=latest?g.filter(n=>latest.dezenas.includes(n)).length:0;
+ const repeatScore=Math.max(0,100-Math.abs(repeats-repeatMean)*20);
+ const structural=(parityScore+sumScore+repeatScore)/3;
+ return Math.round((base*.7+structural*.3+Number.EPSILON)*100)/100;
 }
 function makeGames(){
- const c=C[mode],qty=Math.max(1,Math.min(10,Number($('gamecount').value)||3)),profile=scoreProfile(),history=selected();
- const candidates=[];
- if(mode==='lotofacil'){
-  // A planilha cria 100 candidatos com RAND()^(1/MAX(0.01,score)),
-  // seleciona as 15 maiores chaves e classifica pelo score final.
-  for(let t=0;t<100;t++){
-   const keys=profile.map(x=>({n:x.n,key:Math.pow(Math.random(),1/Math.max(.01,x.score))}));
-   const g=keys.sort((a,b)=>b.key-a.key).slice(0,15).map(x=>x.n).sort((a,b)=>a-b);
-   candidates.push({dezenas:g,score:candidateScore(g,profile,history)});
-  }
- }else{
-  const weights=profile.map(x=>Math.max(.2,x.score)),unique=new Map();
-  for(let t=0;t<900;t++){
-   let pool=Array.from({length:c.max},(_,i)=>i+1),g=[];
-   while(g.length<c.draw){let total=pool.reduce((s,n)=>s+weights[n-1],0),r=Math.random()*total,idx=0;for(;idx<pool.length;idx++){r-=weights[pool[idx]-1];if(r<=0)break}g.push(pool.splice(Math.min(idx,pool.length-1),1)[0]);}
-   g.sort((a,b)=>a-b);const key=g.join('-');if(!unique.has(key))unique.set(key,{dezenas:g,score:candidateScore(g,profile,history)});
-  }
-  candidates.push(...unique.values());
+ const c=C[mode],qty=Math.max(1,Math.min(10,Number($('gamecount').value)||3)),profile=scoreProfile(),history=all[mode];
+ const candidates=[],seen=new Set();
+ // 100 candidatos por modalidade, com sorteio ponderado pela pontuação da dezena.
+ for(let t=0;t<100;t++){
+  const keys=profile.map(x=>({n:x.n,key:Math.pow(Math.random(),1/Math.max(.01,x.score))}));
+  const g=keys.sort((a,b)=>b.key-a.key).slice(0,c.draw).map(x=>x.n).sort((a,b)=>a-b);
+  const key=g.join('-');
+  if(!seen.has(key)){seen.add(key);candidates.push({dezenas:g,score:candidateScore(g,profile,history)});}
  }
  return candidates.sort((a,b)=>b.score-a.score).slice(0,qty);
 }
