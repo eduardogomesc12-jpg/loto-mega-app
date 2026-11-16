@@ -1,0 +1,29 @@
+name: ECG - Inteligência Estatística com IA
+on:
+  schedule:
+    - cron: '0 21 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: ecg-ai-report
+  cancel-in-progress: false
+jobs:
+  generate-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar branch main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Gerar relatório com OpenAI Responses API
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
+        run: node scripts/generate-ai-report.mjs
+      - name: Publicar relatório JSON na branch main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/inteligencia.json
+          if git diff --cached --quiet; then echo "Sem alterações"; else git commit -m "Atualiza relatório diário de inteligência ECG" && git push; fi
