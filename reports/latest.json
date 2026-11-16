@@ -1,0 +1,314 @@
+{
+  "generated_at": "2026-11-16T21:49:55.513460+00:00",
+  "source": "Feed público de resultados; o app também consulta a API oficial da Caixa.",
+  "notice": "Análise descritiva, não preditiva. Nenhuma frequência ou atraso altera a probabilidade matemática de uma dezena em um sorteio justo.",
+  "games": {
+    "lotofacil": {
+      "game": "lotofacil",
+      "label": "Lotofácil",
+      "contest": 3657,
+      "date": "09/04/2026",
+      "draw_count": 3657,
+      "top15": [
+        {
+          "number": 20,
+          "count": 2292,
+          "last100": 74
+        },
+        {
+          "number": 10,
+          "count": 2274,
+          "last100": 68
+        },
+        {
+          "number": 25,
+          "count": 2273,
+          "last100": 66
+        },
+        {
+          "number": 11,
+          "count": 2250,
+          "last100": 62
+        },
+        {
+          "number": 13,
+          "count": 2229,
+          "last100": 64
+        },
+        {
+          "number": 24,
+          "count": 2220,
+          "last100": 59
+        },
+        {
+          "number": 1,
+          "count": 2215,
+          "last100": 64
+        },
+        {
+          "number": 4,
+          "count": 2214,
+          "last100": 69
+        },
+        {
+          "number": 14,
+          "count": 2212,
+          "last100": 49
+        },
+        {
+          "number": 3,
+          "count": 2199,
+          "last100": 50
+        },
+        {
+          "number": 12,
+          "count": 2199,
+          "last100": 56
+        },
+        {
+          "number": 2,
+          "count": 2192,
+          "last100": 64
+        },
+        {
+          "number": 22,
+          "count": 2189,
+          "last100": 56
+        },
+        {
+          "number": 5,
+          "count": 2187,
+          "last100": 52
+        },
+        {
+          "number": 15,
+          "count": 2183,
+          "last100": 63
+        }
+      ],
+      "overdue10": [
+        {
+          "number": 9,
+          "draws": 8
+        },
+        {
+          "number": 16,
+          "draws": 4
+        },
+        {
+          "number": 5,
+          "draws": 2
+        },
+        {
+          "number": 3,
+          "draws": 1
+        },
+        {
+          "number": 6,
+          "draws": 1
+        },
+        {
+          "number": 11,
+          "draws": 1
+        },
+        {
+          "number": 14,
+          "draws": 1
+        },
+        {
+          "number": 15,
+          "draws": 1
+        },
+        {
+          "number": 21,
+          "draws": 1
+        },
+        {
+          "number": 25,
+          "draws": 1
+        }
+      ],
+      "average_even": 7.2,
+      "expected_even": 7.5,
+      "average_sum": 195.195,
+      "theoretical_sum": 195.0,
+      "average_repeats": 8.969,
+      "observations": [
+        {
+          "title": "Equilíbrio pares/ímpares",
+          "detail": "Média observada de 7.20 pares por concurso; referência combinatória: 7.50.",
+          "type": "context"
+        },
+        {
+          "title": "Soma das dezenas",
+          "detail": "Média histórica 195.2; média teórica sob sorteio uniforme 195.0.",
+          "type": "context"
+        },
+        {
+          "title": "Repetição entre concursos",
+          "detail": "Média observada de 8.97 dezenas repetidas entre concursos consecutivos.",
+          "type": "context"
+        },
+        {
+          "title": "Validação antes de alterar pesos",
+          "detail": "Use backtesting temporal, comparando cada regra com sorteios aleatórios e sem usar concursos futuros no treinamento. Frequências e atrasos não são previsões.",
+          "type": "recommendation"
+        }
+      ]
+    },
+    "megasena": {
+      "game": "megasena",
+      "label": "Mega-Sena",
+      "contest": 2994,
+      "date": "09/04/2026",
+      "draw_count": 2994,
+      "top15": [
+        {
+          "number": 10,
+          "count": 353,
+          "last100": 14
+        },
+        {
+          "number": 53,
+          "count": 342,
+          "last100": 12
+        },
+        {
+          "number": 37,
+          "count": 325,
+          "last100": 14
+        },
+        {
+          "number": 5,
+          "count": 324,
+          "last100": 5
+        },
+        {
+          "number": 34,
+          "count": 321,
+          "last100": 6
+        },
+        {
+          "number": 33,
+          "count": 320,
+          "last100": 11
+        },
+        {
+          "number": 32,
+          "count": 319,
+          "last100": 12
+        },
+        {
+          "number": 38,
+          "count": 319,
+          "last100": 11
+        },
+        {
+          "number": 27,
+          "count": 318,
+          "last100": 15
+        },
+        {
+          "number": 46,
+          "count": 317,
+          "last100": 15
+        },
+        {
+          "number": 4,
+          "count": 316,
+          "last100": 12
+        },
+        {
+          "number": 17,
+          "count": 316,
+          "last100": 10
+        },
+        {
+          "number": 42,
+          "count": 316,
+          "last100": 13
+        },
+        {
+          "number": 30,
+          "count": 315,
+          "last100": 11
+        },
+        {
+          "number": 35,
+          "count": 315,
+          "last100": 11
+        }
+      ],
+      "overdue10": [
+        {
+          "number": 25,
+          "draws": 41
+        },
+        {
+          "number": 54,
+          "draws": 41
+        },
+        {
+          "number": 48,
+          "draws": 37
+        },
+        {
+          "number": 34,
+          "draws": 31
+        },
+        {
+          "number": 39,
+          "draws": 23
+        },
+        {
+          "number": 24,
+          "draws": 21
+        },
+        {
+          "number": 12,
+          "draws": 20
+        },
+        {
+          "number": 7,
+          "draws": 18
+        },
+        {
+          "number": 38,
+          "draws": 17
+        },
+        {
+          "number": 9,
+          "draws": 16
+        }
+      ],
+      "average_even": 3.013,
+      "expected_even": 3.0,
+      "average_sum": 183.123,
+      "theoretical_sum": 183.0,
+      "average_repeats": 0.581,
+      "observations": [
+        {
+          "title": "Equilíbrio pares/ímpares",
+          "detail": "Média observada de 3.01 pares por concurso; referência combinatória: 3.00.",
+          "type": "context"
+        },
+        {
+          "title": "Soma das dezenas",
+          "detail": "Média histórica 183.1; média teórica sob sorteio uniforme 183.0.",
+          "type": "context"
+        },
+        {
+          "title": "Repetição entre concursos",
+          "detail": "Média observada de 0.58 dezenas repetidas entre concursos consecutivos.",
+          "type": "context"
+        },
+        {
+          "title": "Validação antes de alterar pesos",
+          "detail": "Use backtesting temporal, comparando cada regra com sorteios aleatórios e sem usar concursos futuros no treinamento. Frequências e atrasos não são previsões.",
+          "type": "recommendation"
+        }
+      ]
+    }
+  },
+  "errors": {}
+}
