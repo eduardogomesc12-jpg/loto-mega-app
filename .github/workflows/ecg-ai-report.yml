@@ -5,12 +5,17 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+  pages: write
+  id-token: write
 concurrency:
   group: ecg-ai-report
   cancel-in-progress: false
 jobs:
   generate-report:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Baixar branch main
         uses: actions/checkout@v4
@@ -27,3 +32,12 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/inteligencia.json
           if git diff --cached --quiet; then echo "Sem alterações"; else git commit -m "Atualiza relatório diário de inteligência ECG" && git push; fi
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Preparar site atualizado
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - name: Publicar relatório no GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
