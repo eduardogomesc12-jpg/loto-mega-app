@@ -5,6 +5,8 @@ on:
     paths:
       - "scripts/ecg_daily_analysis.py"
       - "tests/**"
+      - "scripts/apply-approved-method.mjs"
+      - "data/metodo-aprovado.json"
       - ".github/workflows/ecg-statistics.yml"
   schedule:
     - cron: "5 21 * * *"
@@ -27,8 +29,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Validar sintaxe e testes estatísticos
+      - name: Validar sintaxe e configuração do método versionado
         run: |
+          node --check scripts/apply-approved-method.mjs
+          python -m json.tool data/metodo-aprovado.json > /dev/null
           python -m py_compile scripts/ecg_daily_analysis.py
           python -m unittest discover -s tests -p "test_*.py" -v
       - name: Gerar relatório com dados oficiais validados
