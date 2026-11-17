@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "version_id": "v1.0.0",
+  "parent_version": null,
+  "updated_at": "2026-11-17T00:00:00.000Z",
+  "status": "original_preservado",
+  "modalidades": {
+    "lotofacil": {
+      "pesos_frequencia": [
+        0.35,
+        0.2,
+        0.15,
+        0.1,
+        0.1,
+        0.1
+      ],
+      "peso_estrutural": 0.3
+    },
+    "megasena": {
+      "pesos_frequencia": [
+        0.35,
+        0.2,
+        0.15,
+        0.1,
+        0.1,
+        0.1
+      ],
+      "peso_estrutural": 0.3
+    }
+  },
+  "nota": "Parâmetros originais do gerador ECG. Alterações somente por proposta validada e autorização explícita."
+}
