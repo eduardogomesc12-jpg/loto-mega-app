@@ -229,6 +229,8 @@ def research_experiments(draws, cfg, game):
         threshold_rates = [row["algum_jogo_com_faixa_minima"] for row in rows]
         paired_mean = [rows[i]["media_acertos"] - baseline[i]["media_acertos"] for i in range(len(rows))] if name != "aleatorio_uniforme" else [0.0] * len(rows)
         paired_best = [rows[i]["melhor_acerto"] - baseline[i]["melhor_acerto"] for i in range(len(rows))] if name != "aleatorio_uniforme" else [0.0] * len(rows)
+        original_rows = records["ecg_original"]
+        paired_original = [rows[i]["media_acertos"] - original_rows[i]["media_acertos"] for i in range(len(rows))] if name not in ("ecg_original", "aleatorio_uniforme") else [0.0] * len(rows)
         summary[name] = {
             "media_acertos_por_jogo": round(statistics.mean(mean_hits), 4),
             "media_melhor_jogo_por_concurso": round(statistics.mean(best_hits), 4),
@@ -238,6 +240,11 @@ def research_experiments(draws, cfg, game):
             "ic95_diferenca_media_acertos": _bootstrap_ci(paired_mean, sum(map(ord, name)) + len(draws)),
             "diferenca_pareada_melhor_jogo_vs_aleatorio": round(statistics.mean(paired_best), 4),
             "ic95_diferenca_melhor_jogo": _bootstrap_ci(paired_best, sum(map(ord, name)) + len(draws) + 31),
+            "diferenca_pareada_media_vs_ecg_original": round(statistics.mean(paired_original), 4),
+            "ic95_diferenca_vs_ecg_original": _bootstrap_ci(paired_original, sum(map(ord, name)) + len(draws) + 67),
+            "vitorias_vs_ecg_original": sum(value > 0 for value in paired_original),
+            "empates_vs_ecg_original": sum(value == 0 for value in paired_original),
+            "derrotas_vs_ecg_original": sum(value < 0 for value in paired_original),
             "concursos_teste": len(rows)
         }
     deltas = {name: summary[name]["diferenca_pareada_media_acertos_vs_aleatorio"] for name in variants}
