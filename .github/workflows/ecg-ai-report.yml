@@ -1,5 +1,10 @@
 name: ECG - Inteligência Estatística com IA
 on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/generate-ai-report.mjs"
+      - ".github/workflows/ecg-ai-report.yml"
   schedule:
     - cron: "0 21 * * *"
   workflow_dispatch:
