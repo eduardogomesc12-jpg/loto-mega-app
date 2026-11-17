@@ -1,5 +1,11 @@
 name: ECG - análise estatística diária
 on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/ecg_daily_analysis.py"
+      - "tests/**"
+      - ".github/workflows/ecg-statistics.yml"
   schedule:
     - cron: "5 21 * * *"
   workflow_dispatch:
