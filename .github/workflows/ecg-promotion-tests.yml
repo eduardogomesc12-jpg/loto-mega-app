@@ -1,0 +1,22 @@
+name: ECG - teste isolado de promoção e backup
+on:
+  push:
+    paths:
+      - "scripts/apply-approved-method.mjs"
+      - "tests/test_method_promotion.mjs"
+      - ".github/workflows/ecg-promotion-tests.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  promotion-cycle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validar sintaxe
+        run: node --check scripts/apply-approved-method.mjs
+      - name: Testar bloqueio, autorização, publicação, backup e restauração em pasta temporária
+        run: node tests/test_method_promotion.mjs
