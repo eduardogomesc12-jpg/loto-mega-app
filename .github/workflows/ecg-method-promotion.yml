@@ -1,0 +1,64 @@
+name: ECG - aplicar melhoria autorizada ou restaurar backup
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "Operação autorizada"
+        required: true
+        type: choice
+        options:
+          - apply
+          - restore
+      proposal_id:
+        description: "ID da proposta (somente para apply)"
+        required: false
+        type: string
+      version:
+        description: "Versão do backup (somente para restore), ex.: v1.0.0"
+        required: false
+        type: string
+      approval:
+        description: "Digite exatamente AUTORIZO-ECG para confirmar"
+        required: true
+        type: string
+permissions:
+  contents: write
+concurrency:
+  group: ecg-method-promotion
+  cancel-in-progress: false
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do método atual
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Preparar Node e Python
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Aplicar proposta somente com autorização e evidência aprovada
+        env:
+          METHOD_ACTION: \${{ inputs.action }}
+          METHOD_APPROVAL: \${{ inputs.approval }}
+          PROPOSAL_ID: \${{ inputs.proposal_id }}
+          METHOD_VERSION: \${{ inputs.version }}
+        run: node scripts/apply-approved-method.mjs
+      - name: Validar código e testes antes de publicar
+        run: |
+          node --check scripts/apply-approved-method.mjs
+          python -m py_compile scripts/ecg_daily_analysis.py
+          python -m unittest discover -s tests -p "test_*.py" -v
+      - name: Salvar versão, backup e histórico no Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/metodo-aprovado.json data/historico-versoes.json backups/metodos
+          git diff --cached --check
+          git commit -m "ECG: \${{ inputs.action }} de método autorizado"
+          git push origin HEAD:main
