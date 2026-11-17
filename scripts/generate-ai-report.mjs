@@ -75,8 +75,12 @@ function analyzeGame(game, label) {
       metrics.media_melhor_jogo_por_concurso + "; concursos com faixa mínima " +
       metrics.concursos_com_algum_jogo_na_faixa_minima_pct + "%."
     ).join(" ");
-    const deltas = Object.entries(experiment.diferencas_variantes_vs_gerador_original || {})
-      .map(([name, delta]) => name + " vs ECG original: " + (delta > 0 ? "+" : "") + delta + " acertos/jogo.")
+    const deltas = Object.entries(experiment.estrategias || {})
+      .filter(([name]) => name !== "ecg_original" && name !== "aleatorio_uniforme")
+      .map(([name, metrics]) => name + " vs ECG original: " +
+        (metrics.diferenca_pareada_media_vs_ecg_original > 0 ? "+" : "") +
+        metrics.diferenca_pareada_media_vs_ecg_original + " acertos/jogo; IC95% [" +
+        (metrics.ic95_diferenca_vs_ecg_original || []).join(", ") + "].")
       .join(" ");
     recommendations.push(recommendation(
       "Comparação completa do gerador ECG com variantes",
