@@ -67,26 +67,40 @@ function analyzeGame(game, label) {
 
   const experiment = cfg.experimentos_pesquisa || { status: "nao_executado" };
   if (experiment.status === "concluido") {
-    const leader = experiment.estrategias?.[experiment.melhor_media_observada];
-    const ci = leader?.ic95_diferenca_pareada || [null, null];
+    const leaderName = experiment.melhor_variante_vs_aleatorio;
+    const leader = experiment.estrategias?.[leaderName];
+    const original = experiment.estrategias?.ecg_original;
+    const comparisons = Object.entries(experiment.estrategias || {}).map(([name, metrics]) =>
+      name + ": média " + metrics.media_acertos_por_jogo + " acertos/jogo; melhor jogo " +
+      metrics.media_melhor_jogo_por_concurso + "; concursos com faixa mínima " +
+      metrics.concursos_com_algum_jogo_na_faixa_minima_pct + "%."
+    ).join(" ");
+    const deltas = Object.entries(experiment.diferencas_variantes_vs_gerador_original || {})
+      .map(([name, delta]) => name + " vs ECG original: " + (delta > 0 ? "+" : "") + delta + " acertos/jogo.")
+      .join(" ");
     recommendations.push(recommendation(
-      "Experimento walk-forward: comparação de estratégias",
+      "Comparação completa do gerador ECG com variantes",
       experiment.evidencia === "sinal_positivo_exploratorio" ? "Investigar" : "Manter método atual",
-      "Verificar se janelas históricas diferentes ou ponderação de recência superam uma seleção uniforme fora da amostra.",
-      "Foram testadas " + experiment.concursos_teste + " previsões históricas. Melhor média observada: " + experiment.melhor_media_observada + " (" + (leader?.media_acertos ?? "n/d") + " acertos por jogo).",
-      "Diferença média pareada contra baseline aleatório: " + (leader?.diferenca_media_vs_baseline_simulado ?? "n/d") + "; IC95%: [" + ci.join(", ") + "]. Evidência: " + experiment.evidencia + ".",
+      "Avaliar se alterações de recência, equilíbrio estrutural ou diversificação de portfólio melhoram o desempenho fora da amostra.",
+      "Foram avaliados " + experiment.concursos_teste + " concursos, com " + experiment.jogos_por_concurso +
+      " jogos por estratégia e 100 candidatos por lote. Melhor variante vs aleatório: " + leaderName +
+      " (" + (leader?.media_acertos_por_jogo ?? "n/d") + " acertos/jogo). ECG original: " +
+      (original?.media_acertos_por_jogo ?? "n/d") + " acertos/jogo. " + deltas,
+      comparisons + " Diferença da melhor variante vs aleatório: " +
+      (leader?.diferenca_pareada_media_acertos_vs_aleatorio ?? "n/d") +
+      "; IC95% [" + (leader?.ic95_diferenca_media_acertos || []).join(", ") + "]. Evidência: " + experiment.evidencia + ".",
       (experiment.limitacoes || []).join(" "),
-      "Repetir a hipótese em concursos futuros ainda não usados e em uma segunda janela temporal. Não alterar o gerador antes de validação independente e autorização."
+      "Replicar as variantes em um período futuro intocado, avaliar intervalos pareados contra o ECG original e corrigir múltiplas comparações. Nenhuma mudança será aplicada sem autorização."
     ));
   } else {
     recommendations.push(recommendation(
-      "Laboratório de experimentos: ampliar validação",
+      "Laboratório de comparação completa",
       "Aguardando amostra",
-      "Executar comparações walk-forward independentes para frequências de 30, 100 e 250 concursos e ponderação de recência.",
+      "Comparar o gerador original reproduzido com variantes completas de recência, equilíbrio e diversificação.",
       "Status: " + (experiment.status || "indisponível") + ". " + (experiment.nota || ""),
       "Nenhuma conclusão comparativa foi emitida.",
       "Sem amostra mínima, não há base para recomendar mudança no método.",
-      "Aguardar histórico suficiente e repetir a execução diária."
+      "Aguardar histórico suficiente e executar a comparação temporal."
     ));
   }
 
@@ -110,7 +124,7 @@ async function main() {
     gerado_em: new Date().toISOString(),
     fonte_dados: statistics.source,
     status_ia: "gerado_localmente",
-    modelo: "ECG Laboratório Estatístico Local v2",
+    modelo: "ECG Laboratório Estatístico Local v3",
     metadados: Object.fromEntries(Object.entries(statistics.games).map(([key, value]) =>
       [key, { ultimo_concurso: value.contest, data_ultimo: value.date, concursos_analisados: value.draw_count }])),
     modalidades: {
