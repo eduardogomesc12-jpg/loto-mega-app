@@ -112,33 +112,37 @@ def _profile_ecg(history, cfg, profile_weights):
         profile.append({"n": i + 1, "score": _round2(score), "components": components})
     return profile
 
-def _candidate_score(numbers, profile, history, cfg, structural_weight):
-    by_number = {item["n"]: item["score"] for item in profile}
+def _score_context(history, cfg):
+    if cfg['max'] == 25:
+        return {'latest': history[0] if history else None}
+    sums = [sum(draw['dezenas']) for draw in history]
+    mean = statistics.mean(sums) if sums else cfg['draw'] * (cfg['max'] + 1) / 2
+    variance = statistics.pvariance(sums) if sums else 1
+    repeat_counts = []
+    for i in range(len(history) - 1):
+        previous = set(history[i + 1]['dezenas'])
+        repeat_counts.append(sum(number in previous for number in history[i]['dezenas']))
+    return {'latest': history[0] if history else None, 'sum_mean': mean,
+            'sum_sd': math.sqrt(max(1, variance)),
+            'repeat_mean': statistics.mean(repeat_counts) if repeat_counts else 0.6}
+
+def _candidate_score(numbers, profile, history, cfg, structural_weight, context=None):
+    context = context or _score_context(history, cfg)
+    by_number = {item['n']: item['score'] for item in profile}
     base = sum(by_number.get(number, 0) for number in numbers)
     even_count = sum(number % 2 == 0 for number in numbers)
-    parity_score = max(0, 100 - abs(even_count - cfg["draw"] / 2) * 20)
-    if cfg["max"] == 25:
-        latest = history[0] if history else None
-        repeats = sum(number in latest["dezenas"] for number in numbers) if latest else 0
+    parity_score = max(0, 100 - abs(even_count - cfg['draw'] / 2) * 20)
+    latest = context['latest']
+    repeats = sum(number in latest['dezenas'] for number in numbers) if latest else 0
+    if cfg['max'] == 25:
         structural = sum([
             max(0, 100 - abs(even_count - 7.5) * 20),
             max(0, 100 - abs(sum(numbers) - 195) * 1.2),
             max(0, 100 - abs(repeats - 9) * 12)
         ]) / 3
     else:
-        sums = [sum(draw["dezenas"]) for draw in history]
-        mean = statistics.mean(sums) if sums else cfg["draw"] * (cfg["max"] + 1) / 2
-        variance = statistics.pvariance(sums) if sums else 1
-        sd = math.sqrt(max(1, variance))
-        sum_score = max(0, 100 - abs(sum(numbers) - mean) / sd * 18)
-        repeat_counts = []
-        for i in range(len(history) - 1):
-            previous = set(history[i + 1]["dezenas"])
-            repeat_counts.append(sum(number in previous for number in history[i]["dezenas"]))
-        repeat_mean = statistics.mean(repeat_counts) if repeat_counts else 0.6
-        latest = history[0] if history else None
-        repeats = sum(number in latest["dezenas"] for number in numbers) if latest else 0
-        repeat_score = max(0, 100 - abs(repeats - repeat_mean) * 20)
+        sum_score = max(0, 100 - abs(sum(numbers) - context['sum_mean']) / context['sum_sd'] * 18)
+        repeat_score = max(0, 100 - abs(repeats - context['repeat_mean']) * 20)
         structural = (parity_score + sum_score + repeat_score) / 3
     return _round2(base * (1 - structural_weight) + structural * structural_weight)
 
@@ -158,6 +162,7 @@ def _generate_portfolio(history, cfg, variant, seed, qty=3):
     else:
         raise ValueError("Variante desconhecida: " + variant)
     profile = _profile_ecg(history, cfg, profile_weights)
+    context = _score_context(history, cfg)
     candidates, seen = [], set()
     for _ in range(100):
         keys = [{"n": item["n"], "key": rng.random() ** (1 / max(0.01, item["score"]))} for item in profile]
@@ -166,7 +171,7 @@ def _generate_portfolio(history, cfg, variant, seed, qty=3):
         key = "-".join(map(str, numbers))
         if key not in seen:
             seen.add(key)
-            candidates.append({"dezenas": numbers, "score": _candidate_score(numbers, profile, history, cfg, structural_weight)})
+            candidates.append({"dezenas": numbers, "score": _candidate_score(numbers, profile, history, cfg, structural_weight, context)})
     candidates.sort(key=lambda item: -item["score"])
     if diversity_penalty == 0:
         return [item["dezenas"] for item in candidates[:qty]]
