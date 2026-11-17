@@ -1,9 +1,9 @@
 {
-  "schema_version": 2,
-  "gerado_em": "2026-11-17T16:24:18.955Z",
+  "schema_version": 3,
+  "gerado_em": "2026-11-17T18:31:15.075Z",
   "fonte_dados": "Feed histórico público com conferência do último concurso e preenchimento incremental via endpoint público do Portal Loterias CAIXA.",
-  "status_ia": "aguardando_configuracao",
-  "modelo": "gpt-4.1-mini",
+  "status_ia": "gerado_localmente",
+  "modelo": "ECG Motor Estatístico Local v1",
   "metadados": {
     "lotofacil": {
       "ultimo_concurso": 3831,
@@ -16,7 +16,77 @@
       "concursos_analisados": 3086
     }
   },
-  "modalidades": null,
-  "aviso": "Frequências e atrasos são descritivos e não aumentam a probabilidade matemática de ganhar.",
-  "aviso_ia": "Configure OPENAI_API_KEY em Settings > Secrets and variables > Actions para ativar a análise generativa. Nunca insira a chave no código ou no navegador."
+  "modalidades": {
+    "lotofacil": {
+      "resumo": "Lotofácil: análise local de 3831 concursos, com frequências, atrasos e validação temporal. As métricas descrevem o passado e não preveem sorteios.",
+      "concursos_analisados": 3831,
+      "fonte": "https://servicebus2.caixa.gov.br/portaldeloterias/api/lotofacil",
+      "recomendacoes": [
+        {
+          "titulo": "Preservar a separação entre histórico e janela recente",
+          "prioridade": "Alta",
+          "hipotese": "Acompanhar se as frequências recentes diferem do histórico sem transformar oscilações em previsão.",
+          "evidencia": "Foram analisados 3831 concursos. A janela recente contém 30 concursos; o ranking completo contém 15 dezenas destacadas.",
+          "backtest": "Análise descritiva; não constitui teste de capacidade preditiva.",
+          "limitacoes": "Frequências variam naturalmente em sorteios independentes. Rankings podem mudar com o tamanho da janela.",
+          "proximo_teste": "Comparar rankings em janelas de 30, 50 e 100 concursos e registrar a estabilidade antes de qualquer alteração no gerador."
+        },
+        {
+          "titulo": "Monitorar a concentração do ranking recente",
+          "prioridade": "Monitorar",
+          "hipotese": "Verificar se as dezenas mais frequentes na janela curta permanecem estáveis em janelas maiores.",
+          "evidencia": "Top 5 na janela de 30 concursos: 15 (23), 06 (22), 23 (22), 13 (21), 24 (21). Valores representam contagens observadas, não probabilidades futuras.",
+          "backtest": "Comparação descritiva entre contagens; não demonstra vantagem sobre sorteio uniforme.",
+          "limitacoes": "Janela curta tem maior variabilidade e pode destacar extremos por acaso. Não selecionar dezenas apenas por este ranking.",
+          "proximo_teste": "Recalcular a posição dessas dezenas nas janelas de 50 e 100 concursos e medir a persistência do ranking."
+        },
+        {
+          "titulo": "Acompanhar o backtesting walk-forward",
+          "prioridade": "Alta",
+          "hipotese": "Manter a avaliação temporal como critério obrigatório antes de aprovar mudanças no método estatístico.",
+          "evidencia": "Janela de treinamento 30; 100 concursos de teste; média observada 9.09 acertos; referência aleatória esperada 9; diferença +0.09.",
+          "backtest": "Resultado calculado em sequência temporal, usando somente concursos anteriores no treinamento. A referência informada é a esperança matemática de uma seleção uniforme.",
+          "limitacoes": "O valor esperado não substitui uma simulação de distribuição nem intervalo de confiança. Diferença observada não comprova superioridade; há risco de sobreajuste e múltiplas comparações.",
+          "proximo_teste": "Executar simulações aleatórias com o mesmo número de testes, calcular distribuição de resultados e repetir em períodos futuros sem reajustar parâmetros."
+        }
+      ],
+      "aviso": "Sorteios são aleatórios e independentes. Frequência, atraso e padrões históricos não aumentam a probabilidade matemática de ganhar."
+    },
+    "megasena": {
+      "resumo": "Mega-Sena: análise local de 3086 concursos, com frequências, atrasos e validação temporal. As métricas descrevem o passado e não preveem sorteios.",
+      "concursos_analisados": 3086,
+      "fonte": "https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena",
+      "recomendacoes": [
+        {
+          "titulo": "Preservar a separação entre histórico e janela recente",
+          "prioridade": "Alta",
+          "hipotese": "Acompanhar se as frequências recentes diferem do histórico sem transformar oscilações em previsão.",
+          "evidencia": "Foram analisados 3086 concursos. A janela recente contém 30 concursos; o ranking completo contém 15 dezenas destacadas.",
+          "backtest": "Análise descritiva; não constitui teste de capacidade preditiva.",
+          "limitacoes": "Frequências variam naturalmente em sorteios independentes. Rankings podem mudar com o tamanho da janela.",
+          "proximo_teste": "Comparar rankings em janelas de 30, 50 e 100 concursos e registrar a estabilidade antes de qualquer alteração no gerador."
+        },
+        {
+          "titulo": "Monitorar a concentração do ranking recente",
+          "prioridade": "Monitorar",
+          "hipotese": "Verificar se as dezenas mais frequentes na janela curta permanecem estáveis em janelas maiores.",
+          "evidencia": "Top 5 na janela de 30 concursos: 04 (6), 10 (6), 38 (6), 57 (6), 02 (5). Valores representam contagens observadas, não probabilidades futuras.",
+          "backtest": "Comparação descritiva entre contagens; não demonstra vantagem sobre sorteio uniforme.",
+          "limitacoes": "Janela curta tem maior variabilidade e pode destacar extremos por acaso. Não selecionar dezenas apenas por este ranking.",
+          "proximo_teste": "Recalcular a posição dessas dezenas nas janelas de 50 e 100 concursos e medir a persistência do ranking."
+        },
+        {
+          "titulo": "Acompanhar o backtesting walk-forward",
+          "prioridade": "Alta",
+          "hipotese": "Manter a avaliação temporal como critério obrigatório antes de aprovar mudanças no método estatístico.",
+          "evidencia": "Janela de treinamento 30; 100 concursos de teste; média observada 0.53 acertos; referência aleatória esperada 0.6; diferença -0.07.",
+          "backtest": "Resultado calculado em sequência temporal, usando somente concursos anteriores no treinamento. A referência informada é a esperança matemática de uma seleção uniforme.",
+          "limitacoes": "O valor esperado não substitui uma simulação de distribuição nem intervalo de confiança. Diferença observada não comprova superioridade; há risco de sobreajuste e múltiplas comparações.",
+          "proximo_teste": "Executar simulações aleatórias com o mesmo número de testes, calcular distribuição de resultados e repetir em períodos futuros sem reajustar parâmetros."
+        }
+      ],
+      "aviso": "Sorteios são aleatórios e independentes. Frequência, atraso e padrões históricos não aumentam a probabilidade matemática de ganhar."
+    }
+  },
+  "aviso": "Relatório gerado localmente, sem API paga. Estatística descritiva não é previsão."
 }
