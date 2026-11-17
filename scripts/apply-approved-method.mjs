@@ -50,7 +50,7 @@ if (!/^[a-z0-9][a-z0-9-]{2,70}$/.test(proposalId)) throw new Error("PROPOSAL_ID 
 const proposalPath = path.join(ROOT, "proposals", proposalId + ".json");
 const proposal = JSON.parse(await fs.readFile(proposalPath, "utf8"));
 if (proposal.id !== proposalId) throw new Error("ID da proposta não confere.");
-if (proposal.status !== "aprovavel" || proposal.evidencia?.replicacao_confirmada !== true || proposal.evidencia?.ic95_inferior_vs_ecg_original <= 0) {
+if (proposal.status !== "aprovavel" || proposal.evidencia?.replicacao_confirmada !== true || !Number.isFinite(Number(proposal.evidencia?.ic95_inferior_vs_ecg_original)) || Number(proposal.evidencia.ic95_inferior_vs_ecg_original) <= 0) {
   throw new Error("Proposta bloqueada: exige replicação confirmada e IC95% pareado inteiramente acima de zero contra ECG original.");
 }
 if (!proposal.modalidades) throw new Error("Proposta sem parâmetros completos.");
