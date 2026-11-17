@@ -53,7 +53,7 @@ if (proposal.id !== proposalId) throw new Error("ID da proposta não confere.");
 if (proposal.status !== "aprovavel" || proposal.evidencia?.replicacao_confirmada !== true || proposal.evidencia?.ic95_inferior_vs_ecg_original <= 0) {
   throw new Error("Proposta bloqueada: exige replicação confirmada e IC95% pareado inteiramente acima de zero contra ECG original.");
 }
-if (!proposal.parametros || !proposal.modalidades) throw new Error("Proposta sem parâmetros completos.");
+if (!proposal.modalidades) throw new Error("Proposta sem parâmetros completos.");
 const next = {
   schema_version: 1,
   version_id: proposal.version_sugerida,
