@@ -216,7 +216,7 @@ def research_experiments(draws, cfg, game):
     first = len(draws) - max_tests
     prize_threshold = 11 if game == "lotofacil" else 4
     for idx in range(first, len(draws)):
-        history = list(reversed(draws[max(0, idx - 250):idx]))
+        history = list(reversed(draws[:idx]))
         actual = set(draws[idx]["dezenas"])
         contest = draws[idx]["concurso"]
         if len(history) < 250: continue
@@ -263,7 +263,7 @@ def research_experiments(draws, cfg, game):
         evidence = "inconclusiva"
     return {
         "status": "concluido",
-        "desenho": "Walk-forward por concurso: 250 concursos anteriores; 100 candidatos por lote; 3 jogos finais por estratégia; todos avaliados no mesmo resultado futuro. Parâmetros fixos antes do período de teste.",
+        "desenho": "Walk-forward por concurso: todo o histórico anterior disponível; 100 candidatos por lote; 3 jogos finais por estratégia; todos avaliados no mesmo resultado futuro. Parâmetros fixos antes do período de teste.",
         "concursos_teste": len(baseline),
         "periodo_teste": [draws[first]["data"], draws[-1]["data"]],
         "limiar_faixa_minima": prize_threshold,
