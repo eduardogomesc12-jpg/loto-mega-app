@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - "scripts/generate-ai-report.mjs"
+      - "reports/latest.json"
       - ".github/workflows/ecg-ai-report.yml"
   schedule:
     - cron: "15 21 * * *"
