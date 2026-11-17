@@ -83,6 +83,92 @@ def walk_forward(draws, cfg, window, max_tests=100):
         "periodo_teste": [draws[first_test]["data"], draws[-1]["data"]] if results else None,
         "regra": "Treinamento usa somente concursos anteriores ao concurso testado; empate resolvido pela menor dezena."}
 
+
+def _bootstrap_ci(values, seed, rounds=1200):
+    if not values: return [None, None]
+    rng = __import__("random").Random(seed)
+    n = len(values)
+    means = []
+    for _ in range(rounds):
+        means.append(statistics.mean(values[rng.randrange(n)] for _ in range(n)))
+    means.sort()
+    return [round(means[int(0.025 * rounds)], 4), round(means[min(rounds - 1, int(0.975 * rounds))], 4)]
+
+def _counts(history, maximum):
+    freq = [0] * maximum
+    for draw in history:
+        for number in draw["dezenas"]:
+            freq[number - 1] += 1
+    return freq
+
+def research_experiments(draws, cfg, game):
+    """Compara estratégias de seleção em walk-forward; não altera o gerador do app."""
+    max_tests = min(180, max(0, len(draws) - 250))
+    if max_tests < 40:
+        return {"status": "amostra_insuficiente", "concursos_teste": max_tests,
+                "nota": "São necessários ao menos 40 concursos de teste após 250 concursos de treinamento."}
+    strategies = {
+        "frequencia_250": lambda hist, freq: freq,
+        "frequencia_100": lambda hist, freq: _counts(hist[-100:], cfg["max"]),
+        "frequencia_30": lambda hist, freq: _counts(hist[-30:], cfg["max"]),
+        "recencia_ponderada_30_100": lambda hist, freq: [
+            0.7 * a + 0.3 * b for a, b in zip(_counts(hist[-30:], cfg["max"]), _counts(hist[-100:], cfg["max"]))
+        ],
+    }
+    results = {name: [] for name in strategies}
+    random_baselines = []
+    first = len(draws) - max_tests
+    import random
+    for idx in range(first, len(draws)):
+        train, actual = draws[max(0, idx - 250):idx], set(draws[idx]["dezenas"])
+        if len(train) < 250: continue
+        full_counts = _counts(train, cfg["max"])
+        for name, scorer in strategies.items():
+            counts = scorer(train, full_counts)
+            chosen = sorted(range(1, cfg["max"] + 1), key=lambda n: (-counts[n - 1], n))[:cfg["draw"]]
+            results[name].append(len(set(chosen) & actual))
+        rng = random.Random((draws[idx]["concurso"] * 1000003) + cfg["max"])
+        random_baselines.append(len(set(rng.sample(range(1, cfg["max"] + 1), cfg["draw"])) & actual))
+    expected = cfg["draw"] * cfg["draw"] / cfg["max"]
+    summary = {}
+    for name, hits in results.items():
+        paired = [a - b for a, b in zip(hits, random_baselines)]
+        mean = statistics.mean(hits) if hits else 0
+        ci = _bootstrap_ci(paired, sum(ord(x) for x in name) + len(draws))
+        summary[name] = {
+            "media_acertos": round(mean, 4),
+            "diferenca_vs_esperanca_aleatoria": round(mean - expected, 4),
+            "diferenca_media_vs_baseline_simulado": round(statistics.mean(paired), 4),
+            "ic95_diferenca_pareada": ci,
+            "concursos_teste": len(hits),
+            "vitorias_sobre_baseline_simulado": sum(x > 0 for x in paired),
+            "empates_com_baseline_simulado": sum(x == 0 for x in paired),
+            "derrotas_para_baseline_simulado": sum(x < 0 for x in paired),
+        }
+    leader = max(summary, key=lambda n: summary[n]["media_acertos"])
+    ci = summary[leader]["ic95_diferenca_pareada"]
+    evidence = "inconclusiva"
+    if ci[0] is not None and ci[0] > 0: evidence = "sinal_positivo_exploratorio"
+    elif ci[1] is not None and ci[1] < 0: evidence = "desempenho_inferior_ao_baseline"
+    return {
+        "status": "concluido",
+        "desenho": "Walk-forward: 250 concursos anteriores para treino; regra congelada antes do concurso testado; um jogo por estratégia e concurso.",
+        "concursos_teste": len(random_baselines),
+        "periodo_teste": [draws[first]["data"], draws[-1]["data"]],
+        "esperanca_acertos_jogo_aleatorio": round(expected, 4),
+        "baseline_simulado": "Um jogo uniforme independente por concurso, com semente reprodutível.",
+        "estrategias": summary,
+        "melhor_media_observada": leader,
+        "evidencia": evidence,
+        "decisao": "Não aplicar automaticamente. Exigir repetição em período futuro intocado e validação independente; sinal exploratório não prova vantagem futura.",
+        "limitacoes": [
+            "Testa regras de seleção de dezenas, não reproduz integralmente os 100 candidatos e o score do aplicativo.",
+            "Empates de frequência favorecem menor número; regra determinística, não preditiva.",
+            "Quatro variantes foram comparadas; múltiplas comparações elevam risco de falso positivo.",
+            "Sorteios são independentes; resultados passados não alteram probabilidades futuras."
+        ]
+    }
+
 def analyze(game, cfg, draws, official, feed_latest):
     newest = list(reversed(draws))
     max_num, draw_count = cfg["max"], cfg["draw"]
@@ -113,7 +199,9 @@ def analyze(game, cfg, draws, official, feed_latest):
         {"title": "Equilíbrio pares/ímpares", "detail": f"Média observada de {average_even:.2f} pares; expectativa combinatória {expected_even(cfg):.2f}.", "type": "context"},
         {"title": "Integridade do histórico", "detail": f"CAIXA confirmou o concurso {official['concurso']} ({official['data']}); histórico validado com {len(draws)} concursos.", "type": "context"},
         {"title": "Backtesting temporal", "detail": "Comparação walk-forward contra a esperança de seleção uniforme; diferenças pequenas não demonstram vantagem preditiva.", "type": "recommendation"}]
+    experiments = research_experiments(draws, cfg, game)
     return {"game": game, "label": "Lotofácil" if game == "lotofacil" else "Mega-Sena",
+        "experimentos_pesquisa": experiments,
         "contest": official["concurso"], "date": official["data"], "draw_count": len(draws),
         "feed_previous_latest": feed_latest, "history_gap_filled": official["concurso"] - feed_latest,
         "official_source": f"{CAIXA}/{game}",
