@@ -1,114 +1,121 @@
 {
-  "generated_at": "2026-11-16T21:49:55.513460+00:00",
-  "source": "Feed público de resultados; o app também consulta a API oficial da Caixa.",
-  "notice": "Análise descritiva, não preditiva. Nenhuma frequência ou atraso altera a probabilidade matemática de uma dezena em um sorteio justo.",
+  "generated_at": "2026-11-17T16:20:46.216146+00:00",
+  "source": "Feed histórico público com conferência do último concurso e preenchimento incremental via endpoint público do Portal Loterias CAIXA.",
+  "notice": "Estatística descritiva, não preditiva. Frequência e atraso não alteram a probabilidade matemática de sorteios futuros.",
   "games": {
     "lotofacil": {
       "game": "lotofacil",
       "label": "Lotofácil",
-      "contest": 3657,
-      "date": "09/04/2026",
-      "draw_count": 3657,
+      "contest": 3831,
+      "date": "16/11/2026",
+      "draw_count": 3831,
+      "feed_previous_latest": 3657,
+      "history_gap_filled": 174,
+      "official_source": "https://servicebus2.caixa.gov.br/portaldeloterias/api/lotofacil",
       "top15": [
         {
           "number": 20,
-          "count": 2292,
-          "last100": 74
-        },
-        {
-          "number": 10,
-          "count": 2274,
-          "last100": 68
+          "count": 2387,
+          "last100": 0
         },
         {
           "number": 25,
-          "count": 2273,
-          "last100": 66
+          "count": 2381,
+          "last100": 63
+        },
+        {
+          "number": 10,
+          "count": 2375,
+          "last100": 0
         },
         {
           "number": 11,
-          "count": 2250,
-          "last100": 62
+          "count": 2357,
+          "last100": 64
         },
         {
           "number": 13,
-          "count": 2229,
+          "count": 2335,
           "last100": 64
         },
         {
           "number": 24,
-          "count": 2220,
-          "last100": 59
+          "count": 2331,
+          "last100": 66
         },
         {
           "number": 1,
-          "count": 2215,
-          "last100": 64
+          "count": 2323,
+          "last100": 59
         },
         {
           "number": 4,
-          "count": 2214,
-          "last100": 69
+          "count": 2315,
+          "last100": 60
         },
         {
           "number": 14,
-          "count": 2212,
-          "last100": 49
+          "count": 2315,
+          "last100": 0
         },
         {
           "number": 3,
-          "count": 2199,
-          "last100": 50
-        },
-        {
-          "number": 12,
-          "count": 2199,
-          "last100": 56
-        },
-        {
-          "number": 2,
-          "count": 2192,
-          "last100": 64
-        },
-        {
-          "number": 22,
-          "count": 2189,
-          "last100": 56
+          "count": 2310,
+          "last100": 65
         },
         {
           "number": 5,
-          "count": 2187,
-          "last100": 52
+          "count": 2309,
+          "last100": 66
+        },
+        {
+          "number": 12,
+          "count": 2304,
+          "last100": 63
         },
         {
           "number": 15,
-          "count": 2183,
-          "last100": 63
+          "count": 2296,
+          "last100": 67
+        },
+        {
+          "number": 2,
+          "count": 2287,
+          "last100": 0
+        },
+        {
+          "number": 9,
+          "count": 2285,
+          "last100": 0
         }
       ],
       "overdue10": [
         {
-          "number": 9,
-          "draws": 8
+          "number": 7,
+          "draws": 3
         },
         {
-          "number": 16,
-          "draws": 4
+          "number": 8,
+          "draws": 3
         },
         {
-          "number": 5,
+          "number": 19,
           "draws": 2
+        },
+        {
+          "number": 20,
+          "draws": 2
+        },
+        {
+          "number": 1,
+          "draws": 1
         },
         {
           "number": 3,
           "draws": 1
         },
         {
-          "number": 6,
-          "draws": 1
-        },
-        {
-          "number": 11,
+          "number": 12,
           "draws": 1
         },
         {
@@ -116,42 +123,278 @@
           "draws": 1
         },
         {
-          "number": 15,
+          "number": 18,
           "draws": 1
         },
         {
-          "number": 21,
-          "draws": 1
-        },
-        {
-          "number": 25,
+          "number": 22,
           "draws": 1
         }
       ],
-      "average_even": 7.2,
-      "expected_even": 7.5,
-      "average_sum": 195.195,
-      "theoretical_sum": 195.0,
-      "average_repeats": 8.969,
+      "frequency_windows": {
+        "30": {
+          "concursos": 30,
+          "top15": [
+            {
+              "number": 15,
+              "count": 23
+            },
+            {
+              "number": 6,
+              "count": 22
+            },
+            {
+              "number": 23,
+              "count": 22
+            },
+            {
+              "number": 13,
+              "count": 21
+            },
+            {
+              "number": 24,
+              "count": 21
+            },
+            {
+              "number": 25,
+              "count": 21
+            },
+            {
+              "number": 16,
+              "count": 20
+            },
+            {
+              "number": 19,
+              "count": 20
+            },
+            {
+              "number": 22,
+              "count": 19
+            },
+            {
+              "number": 5,
+              "count": 18
+            },
+            {
+              "number": 11,
+              "count": 18
+            },
+            {
+              "number": 17,
+              "count": 18
+            },
+            {
+              "number": 20,
+              "count": 18
+            },
+            {
+              "number": 1,
+              "count": 17
+            },
+            {
+              "number": 3,
+              "count": 17
+            }
+          ]
+        },
+        "50": {
+          "concursos": 50,
+          "top15": [
+            {
+              "number": 15,
+              "count": 37
+            },
+            {
+              "number": 19,
+              "count": 36
+            },
+            {
+              "number": 23,
+              "count": 35
+            },
+            {
+              "number": 24,
+              "count": 35
+            },
+            {
+              "number": 6,
+              "count": 34
+            },
+            {
+              "number": 8,
+              "count": 33
+            },
+            {
+              "number": 12,
+              "count": 32
+            },
+            {
+              "number": 13,
+              "count": 32
+            },
+            {
+              "number": 25,
+              "count": 32
+            },
+            {
+              "number": 1,
+              "count": 31
+            },
+            {
+              "number": 11,
+              "count": 31
+            },
+            {
+              "number": 16,
+              "count": 31
+            },
+            {
+              "number": 3,
+              "count": 30
+            },
+            {
+              "number": 20,
+              "count": 30
+            },
+            {
+              "number": 4,
+              "count": 29
+            }
+          ]
+        },
+        "100": {
+          "concursos": 100,
+          "top15": [
+            {
+              "number": 15,
+              "count": 67
+            },
+            {
+              "number": 5,
+              "count": 66
+            },
+            {
+              "number": 23,
+              "count": 66
+            },
+            {
+              "number": 24,
+              "count": 66
+            },
+            {
+              "number": 3,
+              "count": 65
+            },
+            {
+              "number": 11,
+              "count": 64
+            },
+            {
+              "number": 13,
+              "count": 64
+            },
+            {
+              "number": 12,
+              "count": 63
+            },
+            {
+              "number": 25,
+              "count": 63
+            },
+            {
+              "number": 8,
+              "count": 62
+            },
+            {
+              "number": 19,
+              "count": 62
+            },
+            {
+              "number": 6,
+              "count": 61
+            },
+            {
+              "number": 16,
+              "count": 61
+            },
+            {
+              "number": 4,
+              "count": 60
+            },
+            {
+              "number": 1,
+              "count": 59
+            }
+          ]
+        }
+      },
+      "average_even": 7.19,
+      "expected_even": 7.2,
+      "average_low": 7.205,
+      "average_high": 7.795,
+      "average_sum": 195.16,
+      "sum_stddev": 17.829,
+      "average_range": 22.79,
+      "average_repeats": 8.973,
+      "distribution_by_band": {
+        "01-05": 11544,
+        "06-10": 11398,
+        "11-15": 11607,
+        "16-20": 11389,
+        "21-25": 11527
+      },
+      "backtesting": [
+        {
+          "janela_treinamento": 30,
+          "concursos_teste": 100,
+          "media_acertos": 9.09,
+          "baseline_aleatorio_esperado": 9.0,
+          "diferenca_vs_baseline": 0.09,
+          "periodo_teste": [
+            "10/07/2026",
+            "16/11/2026"
+          ],
+          "regra": "Treinamento usa somente concursos anteriores ao concurso testado; empate resolvido pela menor dezena."
+        },
+        {
+          "janela_treinamento": 100,
+          "concursos_teste": 100,
+          "media_acertos": 9,
+          "baseline_aleatorio_esperado": 9.0,
+          "diferenca_vs_baseline": 0.0,
+          "periodo_teste": [
+            "10/07/2026",
+            "16/11/2026"
+          ],
+          "regra": "Treinamento usa somente concursos anteriores ao concurso testado; empate resolvido pela menor dezena."
+        },
+        {
+          "janela_treinamento": 250,
+          "concursos_teste": 100,
+          "media_acertos": 8.9,
+          "baseline_aleatorio_esperado": 9.0,
+          "diferenca_vs_baseline": -0.1,
+          "periodo_teste": [
+            "10/07/2026",
+            "16/11/2026"
+          ],
+          "regra": "Treinamento usa somente concursos anteriores ao concurso testado; empate resolvido pela menor dezena."
+        }
+      ],
       "observations": [
         {
           "title": "Equilíbrio pares/ímpares",
-          "detail": "Média observada de 7.20 pares por concurso; referência combinatória: 7.50.",
+          "detail": "Média observada de 7.19 pares; expectativa combinatória 7.20.",
           "type": "context"
         },
         {
-          "title": "Soma das dezenas",
-          "detail": "Média histórica 195.2; média teórica sob sorteio uniforme 195.0.",
+          "title": "Integridade do histórico",
+          "detail": "CAIXA confirmou o concurso 3831 (16/11/2026); histórico validado com 3831 concursos.",
           "type": "context"
         },
         {
-          "title": "Repetição entre concursos",
-          "detail": "Média observada de 8.97 dezenas repetidas entre concursos consecutivos.",
-          "type": "context"
-        },
-        {
-          "title": "Validação antes de alterar pesos",
-          "detail": "Use backtesting temporal, comparando cada regra com sorteios aleatórios e sem usar concursos futuros no treinamento. Frequências e atrasos não são previsões.",
+          "title": "Backtesting temporal",
+          "detail": "Comparação walk-forward contra a esperança de seleção uniforme; diferenças pequenas não demonstram vantagem preditiva.",
           "type": "recommendation"
         }
       ]
@@ -159,152 +402,395 @@
     "megasena": {
       "game": "megasena",
       "label": "Mega-Sena",
-      "contest": 2994,
-      "date": "09/04/2026",
-      "draw_count": 2994,
+      "contest": 3086,
+      "date": "15/11/2026",
+      "draw_count": 3086,
+      "feed_previous_latest": 2994,
+      "history_gap_filled": 92,
+      "official_source": "https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena",
       "top15": [
         {
           "number": 10,
-          "count": 353,
-          "last100": 14
+          "count": 362,
+          "last100": 0
         },
         {
           "number": 53,
-          "count": 342,
-          "last100": 12
-        },
-        {
-          "number": 37,
-          "count": 325,
-          "last100": 14
+          "count": 350,
+          "last100": 0
         },
         {
           "number": 5,
-          "count": 324,
-          "last100": 5
+          "count": 337,
+          "last100": 13
         },
         {
-          "number": 34,
-          "count": 321,
-          "last100": 6
-        },
-        {
-          "number": 33,
-          "count": 320,
-          "last100": 11
-        },
-        {
-          "number": 32,
-          "count": 319,
-          "last100": 12
-        },
-        {
-          "number": 38,
-          "count": 319,
-          "last100": 11
+          "number": 37,
+          "count": 334,
+          "last100": 0
         },
         {
           "number": 27,
-          "count": 318,
+          "count": 332,
+          "last100": 14
+        },
+        {
+          "number": 38,
+          "count": 331,
+          "last100": 0
+        },
+        {
+          "number": 17,
+          "count": 329,
           "last100": 15
         },
         {
-          "number": 46,
-          "count": 317,
+          "number": 30,
+          "count": 329,
+          "last100": 15
+        },
+        {
+          "number": 33,
+          "count": 329,
+          "last100": 0
+        },
+        {
+          "number": 43,
+          "count": 328,
           "last100": 15
         },
         {
           "number": 4,
-          "count": 316,
-          "last100": 12
-        },
-        {
-          "number": 17,
-          "count": 316,
-          "last100": 10
-        },
-        {
-          "number": 42,
-          "count": 316,
+          "count": 327,
           "last100": 13
         },
         {
-          "number": 30,
-          "count": 315,
-          "last100": 11
+          "number": 42,
+          "count": 327,
+          "last100": 0
+        },
+        {
+          "number": 32,
+          "count": 326,
+          "last100": 0
         },
         {
           "number": 35,
-          "count": 315,
-          "last100": 11
+          "count": 326,
+          "last100": 0
+        },
+        {
+          "number": 11,
+          "count": 325,
+          "last100": 12
         }
       ],
       "overdue10": [
         {
-          "number": 25,
-          "draws": 41
+          "number": 26,
+          "draws": 39
         },
         {
-          "number": 54,
-          "draws": 41
+          "number": 21,
+          "draws": 29
         },
         {
-          "number": 48,
-          "draws": 37
+          "number": 56,
+          "draws": 28
         },
         {
-          "number": 34,
-          "draws": 31
+          "number": 15,
+          "draws": 26
         },
         {
-          "number": 39,
-          "draws": 23
+          "number": 11,
+          "draws": 24
         },
         {
-          "number": 24,
+          "number": 8,
           "draws": 21
         },
         {
-          "number": 12,
+          "number": 50,
+          "draws": 21
+        },
+        {
+          "number": 53,
+          "draws": 21
+        },
+        {
+          "number": 48,
           "draws": 20
         },
         {
-          "number": 7,
-          "draws": 18
-        },
-        {
-          "number": 38,
-          "draws": 17
-        },
-        {
-          "number": 9,
-          "draws": 16
+          "number": 1,
+          "draws": 19
         }
       ],
-      "average_even": 3.013,
+      "frequency_windows": {
+        "30": {
+          "concursos": 30,
+          "top15": [
+            {
+              "number": 4,
+              "count": 6
+            },
+            {
+              "number": 10,
+              "count": 6
+            },
+            {
+              "number": 38,
+              "count": 6
+            },
+            {
+              "number": 57,
+              "count": 6
+            },
+            {
+              "number": 2,
+              "count": 5
+            },
+            {
+              "number": 5,
+              "count": 5
+            },
+            {
+              "number": 6,
+              "count": 5
+            },
+            {
+              "number": 29,
+              "count": 5
+            },
+            {
+              "number": 37,
+              "count": 5
+            },
+            {
+              "number": 41,
+              "count": 5
+            },
+            {
+              "number": 43,
+              "count": 5
+            },
+            {
+              "number": 7,
+              "count": 4
+            },
+            {
+              "number": 9,
+              "count": 4
+            },
+            {
+              "number": 14,
+              "count": 4
+            },
+            {
+              "number": 16,
+              "count": 4
+            }
+          ]
+        },
+        "50": {
+          "concursos": 50,
+          "top15": [
+            {
+              "number": 16,
+              "count": 10
+            },
+            {
+              "number": 43,
+              "count": 10
+            },
+            {
+              "number": 38,
+              "count": 9
+            },
+            {
+              "number": 2,
+              "count": 8
+            },
+            {
+              "number": 4,
+              "count": 8
+            },
+            {
+              "number": 10,
+              "count": 8
+            },
+            {
+              "number": 30,
+              "count": 8
+            },
+            {
+              "number": 39,
+              "count": 8
+            },
+            {
+              "number": 40,
+              "count": 8
+            },
+            {
+              "number": 6,
+              "count": 7
+            },
+            {
+              "number": 14,
+              "count": 7
+            },
+            {
+              "number": 35,
+              "count": 7
+            },
+            {
+              "number": 36,
+              "count": 7
+            },
+            {
+              "number": 48,
+              "count": 7
+            },
+            {
+              "number": 53,
+              "count": 7
+            }
+          ]
+        },
+        "100": {
+          "concursos": 100,
+          "top15": [
+            {
+              "number": 58,
+              "count": 18
+            },
+            {
+              "number": 6,
+              "count": 15
+            },
+            {
+              "number": 14,
+              "count": 15
+            },
+            {
+              "number": 17,
+              "count": 15
+            },
+            {
+              "number": 30,
+              "count": 15
+            },
+            {
+              "number": 43,
+              "count": 15
+            },
+            {
+              "number": 16,
+              "count": 14
+            },
+            {
+              "number": 23,
+              "count": 14
+            },
+            {
+              "number": 27,
+              "count": 14
+            },
+            {
+              "number": 4,
+              "count": 13
+            },
+            {
+              "number": 5,
+              "count": 13
+            },
+            {
+              "number": 36,
+              "count": 13
+            },
+            {
+              "number": 40,
+              "count": 13
+            },
+            {
+              "number": 2,
+              "count": 12
+            },
+            {
+              "number": 11,
+              "count": 12
+            }
+          ]
+        }
+      },
+      "average_even": 3.015,
       "expected_even": 3.0,
-      "average_sum": 183.123,
-      "theoretical_sum": 183.0,
+      "average_low": 2.975,
+      "average_high": 3.025,
+      "average_sum": 183.047,
+      "sum_stddev": 39.952,
+      "average_range": 43.635,
       "average_repeats": 0.581,
+      "distribution_by_band": {
+        "01-12": 3734,
+        "13-24": 3610,
+        "25-36": 3743,
+        "37-48": 3755,
+        "49-60": 3674
+      },
+      "backtesting": [
+        {
+          "janela_treinamento": 30,
+          "concursos_teste": 100,
+          "media_acertos": 0.53,
+          "baseline_aleatorio_esperado": 0.6,
+          "diferenca_vs_baseline": -0.07,
+          "periodo_teste": [
+            "21/03/2026",
+            "15/11/2026"
+          ],
+          "regra": "Treinamento usa somente concursos anteriores ao concurso testado; empate resolvido pela menor dezena."
+        },
+        {
+          "janela_treinamento": 100,
+          "concursos_teste": 100,
+          "media_acertos": 0.6,
+          "baseline_aleatorio_esperado": 0.6,
+          "diferenca_vs_baseline": 0.0,
+          "periodo_teste": [
+            "21/03/2026",
+            "15/11/2026"
+          ],
+          "regra": "Treinamento usa somente concursos anteriores ao concurso testado; empate resolvido pela menor dezena."
+        },
+        {
+          "janela_treinamento": 250,
+          "concursos_teste": 100,
+          "media_acertos": 0.46,
+          "baseline_aleatorio_esperado": 0.6,
+          "diferenca_vs_baseline": -0.14,
+          "periodo_teste": [
+            "21/03/2026",
+            "15/11/2026"
+          ],
+          "regra": "Treinamento usa somente concursos anteriores ao concurso testado; empate resolvido pela menor dezena."
+        }
+      ],
       "observations": [
         {
           "title": "Equilíbrio pares/ímpares",
-          "detail": "Média observada de 3.01 pares por concurso; referência combinatória: 3.00.",
+          "detail": "Média observada de 3.01 pares; expectativa combinatória 3.00.",
           "type": "context"
         },
         {
-          "title": "Soma das dezenas",
-          "detail": "Média histórica 183.1; média teórica sob sorteio uniforme 183.0.",
+          "title": "Integridade do histórico",
+          "detail": "CAIXA confirmou o concurso 3086 (15/11/2026); histórico validado com 3086 concursos.",
           "type": "context"
         },
         {
-          "title": "Repetição entre concursos",
-          "detail": "Média observada de 0.58 dezenas repetidas entre concursos consecutivos.",
-          "type": "context"
-        },
-        {
-          "title": "Validação antes de alterar pesos",
-          "detail": "Use backtesting temporal, comparando cada regra com sorteios aleatórios e sem usar concursos futuros no treinamento. Frequências e atrasos não são previsões.",
+          "title": "Backtesting temporal",
+          "detail": "Comparação walk-forward contra a esperança de seleção uniforme; diferenças pequenas não demonstram vantagem preditiva.",
           "type": "recommendation"
         }
       ]
