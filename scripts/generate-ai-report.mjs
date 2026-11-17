@@ -45,7 +45,7 @@ async function generateWithOpenAI(data) {
 
   const response = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
-    headers: { Authorization: "Bearer " + process.env.OPENAI_API_KEY, "Content-Type": "application/json" },
+    headers: { Authorization: "Bearer " + (process.env.OPENAI_API_KEY || "").trim(), "Content-Type": "application/json" },
     body: JSON.stringify({
       model: MODEL, instructions,
       input: "Data de geração: " + new Date().toISOString() + "\nRelatório estatístico validado localmente:\n" + JSON.stringify(data),
@@ -74,7 +74,8 @@ async function main() {
     modalidades: null,
     aviso: "Frequências e atrasos são descritivos e não aumentam a probabilidade matemática de ganhar."
   };
-  if (process.env.OPENAI_API_KEY) {
+  const apiKey = (process.env.OPENAI_API_KEY || "").trim();
+  if (apiKey && apiKey !== "\\") {
     output.modalidades = (await generateWithOpenAI(statistics)).modalidades;
     output.status_ia = "gerado";
   } else {
