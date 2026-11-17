@@ -1,11 +1,85 @@
 {
-  "generated_at": "2026-11-17T16:20:46.216146+00:00",
+  "generated_at": "2026-11-17T19:11:15.157967+00:00",
   "source": "Feed histórico público com conferência do último concurso e preenchimento incremental via endpoint público do Portal Loterias CAIXA.",
   "notice": "Estatística descritiva, não preditiva. Frequência e atraso não alteram a probabilidade matemática de sorteios futuros.",
   "games": {
     "lotofacil": {
       "game": "lotofacil",
       "label": "Lotofácil",
+      "experimentos_pesquisa": {
+        "status": "concluido",
+        "desenho": "Walk-forward: 250 concursos anteriores para treino; regra congelada antes do concurso testado; um jogo por estratégia e concurso.",
+        "concursos_teste": 180,
+        "periodo_teste": [
+          "02/04/2026",
+          "16/11/2026"
+        ],
+        "esperanca_acertos_jogo_aleatorio": 9.0,
+        "baseline_simulado": "Um jogo uniforme independente por concurso, com semente reprodutível.",
+        "estrategias": {
+          "frequencia_250": {
+            "media_acertos": 8.8611,
+            "diferenca_vs_esperanca_aleatoria": -0.1389,
+            "diferenca_media_vs_baseline_simulado": -0.0722,
+            "ic95_diferenca_pareada": [
+              -0.3389,
+              0.1944
+            ],
+            "concursos_teste": 180,
+            "vitorias_sobre_baseline_simulado": 69,
+            "empates_com_baseline_simulado": 37,
+            "derrotas_para_baseline_simulado": 74
+          },
+          "frequencia_100": {
+            "media_acertos": 8.9833,
+            "diferenca_vs_esperanca_aleatoria": -0.0167,
+            "diferenca_media_vs_baseline_simulado": 0.05,
+            "ic95_diferenca_pareada": [
+              -0.2111,
+              0.2833
+            ],
+            "concursos_teste": 180,
+            "vitorias_sobre_baseline_simulado": 68,
+            "empates_com_baseline_simulado": 40,
+            "derrotas_para_baseline_simulado": 72
+          },
+          "frequencia_30": {
+            "media_acertos": 9.0611,
+            "diferenca_vs_esperanca_aleatoria": 0.0611,
+            "diferenca_media_vs_baseline_simulado": 0.1278,
+            "ic95_diferenca_pareada": [
+              -0.1444,
+              0.4111
+            ],
+            "concursos_teste": 180,
+            "vitorias_sobre_baseline_simulado": 81,
+            "empates_com_baseline_simulado": 35,
+            "derrotas_para_baseline_simulado": 64
+          },
+          "recencia_ponderada_30_100": {
+            "media_acertos": 9.0222,
+            "diferenca_vs_esperanca_aleatoria": 0.0222,
+            "diferenca_media_vs_baseline_simulado": 0.0889,
+            "ic95_diferenca_pareada": [
+              -0.1556,
+              0.3389
+            ],
+            "concursos_teste": 180,
+            "vitorias_sobre_baseline_simulado": 78,
+            "empates_com_baseline_simulado": 38,
+            "derrotas_para_baseline_simulado": 64
+          }
+        },
+        "melhor_media_observada": "frequencia_30",
+        "evidencia": "inconclusiva",
+        "decisao": "Não aplicar automaticamente. Exigir repetição em período futuro intocado e validação independente; sinal exploratório não prova vantagem futura.",
+        "limitacoes": [
+          "Testa regras de seleção de dezenas, não reproduz integralmente os 100 candidatos e o score do aplicativo.",
+          "Empates de frequência favorecem menor número; regra determinística, não preditiva.",
+          "Quatro variantes foram comparadas; múltiplas comparações elevam risco de falso positivo.",
+          "Sorteios são independentes; resultados passados não alteram probabilidades futuras."
+        ]
+      },
       "contest": 3831,
       "date": "16/11/2026",
       "draw_count": 3831,
@@ -402,6 +476,80 @@
     "megasena": {
       "game": "megasena",
       "label": "Mega-Sena",
+      "experimentos_pesquisa": {
+        "status": "concluido",
+        "desenho": "Walk-forward: 250 concursos anteriores para treino; regra congelada antes do concurso testado; um jogo por estratégia e concurso.",
+        "concursos_teste": 180,
+        "periodo_teste": [
+          "28/08/2025",
+          "15/11/2026"
+        ],
+        "esperanca_acertos_jogo_aleatorio": 0.6,
+        "baseline_simulado": "Um jogo uniforme independente por concurso, com semente reprodutível.",
+        "estrategias": {
+          "frequencia_250": {
+            "media_acertos": 0.5167,
+            "diferenca_vs_esperanca_aleatoria": -0.0833,
+            "diferenca_media_vs_baseline_simulado": -0.0444,
+            "ic95_diferenca_pareada": [
+              -0.1778,
+              0.0889
+            ],
+            "concursos_teste": 180,
+            "vitorias_sobre_baseline_simulado": 46,
+            "empates_com_baseline_simulado": 83,
+            "derrotas_para_baseline_simulado": 51
+          },
+          "frequencia_100": {
+            "media_acertos": 0.5833,
+            "diferenca_vs_esperanca_aleatoria": -0.0167,
+            "diferenca_media_vs_baseline_simulado": 0.0222,
+            "ic95_diferenca_pareada": [
+              -0.1389,
+              0.1667
+            ],
+            "concursos_teste": 180,
+            "vitorias_sobre_baseline_simulado": 51,
+            "empates_com_baseline_simulado": 79,
+            "derrotas_para_baseline_simulado": 50
+          },
+          "frequencia_30": {
+            "media_acertos": 0.5389,
+            "diferenca_vs_esperanca_aleatoria": -0.0611,
+            "diferenca_media_vs_baseline_simulado": -0.0222,
+            "ic95_diferenca_pareada": [
+              -0.1667,
+              0.1222
+            ],
+            "concursos_teste": 180,
+            "vitorias_sobre_baseline_simulado": 53,
+            "empates_com_baseline_simulado": 73,
+            "derrotas_para_baseline_simulado": 54
+          },
+          "recencia_ponderada_30_100": {
+            "media_acertos": 0.5667,
+            "diferenca_vs_esperanca_aleatoria": -0.0333,
+            "diferenca_media_vs_baseline_simulado": 0.0056,
+            "ic95_diferenca_pareada": [
+              -0.1333,
+              0.1444
+            ],
+            "concursos_teste": 180,
+            "vitorias_sobre_baseline_simulado": 48,
+            "empates_com_baseline_simulado": 84,
+            "derrotas_para_baseline_simulado": 48
+          }
+        },
+        "melhor_media_observada": "frequencia_100",
+        "evidencia": "inconclusiva",
+        "decisao": "Não aplicar automaticamente. Exigir repetição em período futuro intocado e validação independente; sinal exploratório não prova vantagem futura.",
+        "limitacoes": [
+          "Testa regras de seleção de dezenas, não reproduz integralmente os 100 candidatos e o score do aplicativo.",
+          "Empates de frequência favorecem menor número; regra determinística, não preditiva.",
+          "Quatro variantes foram comparadas; múltiplas comparações elevam risco de falso positivo.",
+          "Sorteios são independentes; resultados passados não alteram probabilidades futuras."
+        ]
+      },
       "contest": 3086,
       "date": "15/11/2026",
       "draw_count": 3086,
