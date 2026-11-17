@@ -65,10 +65,36 @@ function analyzeGame(game, label) {
     ));
   }
 
+  const experiment = cfg.experimentos_pesquisa || { status: "nao_executado" };
+  if (experiment.status === "concluido") {
+    const leader = experiment.estrategias?.[experiment.melhor_media_observada];
+    const ci = leader?.ic95_diferenca_pareada || [null, null];
+    recommendations.push(recommendation(
+      "Experimento walk-forward: comparação de estratégias",
+      experiment.evidencia === "sinal_positivo_exploratorio" ? "Investigar" : "Manter método atual",
+      "Verificar se janelas históricas diferentes ou ponderação de recência superam uma seleção uniforme fora da amostra.",
+      "Foram testadas " + experiment.concursos_teste + " previsões históricas. Melhor média observada: " + experiment.melhor_media_observada + " (" + (leader?.media_acertos ?? "n/d") + " acertos por jogo).",
+      "Diferença média pareada contra baseline aleatório: " + (leader?.diferenca_media_vs_baseline_simulado ?? "n/d") + "; IC95%: [" + ci.join(", ") + "]. Evidência: " + experiment.evidencia + ".",
+      (experiment.limitacoes || []).join(" "),
+      "Repetir a hipótese em concursos futuros ainda não usados e em uma segunda janela temporal. Não alterar o gerador antes de validação independente e autorização."
+    ));
+  } else {
+    recommendations.push(recommendation(
+      "Laboratório de experimentos: ampliar validação",
+      "Aguardando amostra",
+      "Executar comparações walk-forward independentes para frequências de 30, 100 e 250 concursos e ponderação de recência.",
+      "Status: " + (experiment.status || "indisponível") + ". " + (experiment.nota || ""),
+      "Nenhuma conclusão comparativa foi emitida.",
+      "Sem amostra mínima, não há base para recomendar mudança no método.",
+      "Aguardar histórico suficiente e repetir a execução diária."
+    ));
+  }
+
   return {
-    resumo: label + ": análise local de " + sample + " concursos, com frequências, atrasos e validação temporal. As métricas descrevem o passado e não preveem sorteios.",
+    resumo: label + ": laboratório estatístico local em " + sample + " concursos. Experimentos independentes e temporais são exploratórios; não preveem sorteios.",
     concursos_analisados: sample,
     fonte: cfg.official_source || "Histórico público validado",
+    experimentos: experiment,
     recomendacoes: recommendations,
     aviso: "Sorteios são aleatórios e independentes. Frequência, atraso e padrões históricos não aumentam a probabilidade matemática de ganhar."
   };
@@ -84,7 +110,7 @@ async function main() {
     gerado_em: new Date().toISOString(),
     fonte_dados: statistics.source,
     status_ia: "gerado_localmente",
-    modelo: "ECG Motor Estatístico Local v1",
+    modelo: "ECG Laboratório Estatístico Local v2",
     metadados: Object.fromEntries(Object.entries(statistics.games).map(([key, value]) =>
       [key, { ultimo_concurso: value.contest, data_ultimo: value.date, concursos_analisados: value.draw_count }])),
     modalidades: {
