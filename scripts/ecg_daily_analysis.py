@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Relatório estatístico ECG com validação do histórico e atualização incremental pela CAIXA."""
-import datetime, json, pathlib, statistics, time, urllib.request
+import datetime, json, pathlib, statistics, time, urllib.request, math
 
 GAMES = {"lotofacil": {"max": 25, "draw": 15}, "megasena": {"max": 60, "draw": 6}}
 FEED = "https://raw.githubusercontent.com/maickon/free-apiloterias/refs/heads/master/database/{}/_todos.json"
@@ -84,88 +84,197 @@ def walk_forward(draws, cfg, window, max_tests=100):
         "regra": "Treinamento usa somente concursos anteriores ao concurso testado; empate resolvido pela menor dezena."}
 
 
-def _bootstrap_ci(values, seed, rounds=1200):
+def _bootstrap_ci(values, seed, rounds=2000):
     if not values: return [None, None]
     rng = __import__("random").Random(seed)
     n = len(values)
-    means = []
-    for _ in range(rounds):
-        means.append(statistics.mean(values[rng.randrange(n)] for _ in range(n)))
-    means.sort()
+    means = sorted(statistics.mean(values[rng.randrange(n)] for _ in range(n)) for _ in range(rounds))
     return [round(means[int(0.025 * rounds)], 4), round(means[min(rounds - 1, int(0.975 * rounds))], 4)]
 
-def _counts(history, maximum):
-    freq = [0] * maximum
-    for draw in history:
-        for number in draw["dezenas"]:
-            freq[number - 1] += 1
-    return freq
+def _round2(value):
+    return math.floor(value * 100 + 0.5) / 100
+
+def _profile_ecg(history, cfg, profile_weights):
+    maximum = cfg["max"]
+    def count(rows):
+        freq = [0] * maximum
+        for draw in rows:
+            for number in draw["dezenas"]:
+                freq[number - 1] += 1
+        return freq
+    columns = [count(history), count(history[:30]), count(history[:20]),
+               count(history[:15]), count(history[:10]), count(history[:100])]
+    maxima = [max([1] + col) for col in columns]
+    profile = []
+    for i in range(maximum):
+        components = [columns[j][i] / maxima[j] * 100 for j in range(6)]
+        score = sum(profile_weights[j] * components[j] for j in range(6))
+        profile.append({"n": i + 1, "score": _round2(score), "components": components})
+    return profile
+
+def _candidate_score(numbers, profile, history, cfg, structural_weight):
+    by_number = {item["n"]: item["score"] for item in profile}
+    base = sum(by_number.get(number, 0) for number in numbers)
+    even_count = sum(number % 2 == 0 for number in numbers)
+    parity_score = max(0, 100 - abs(even_count - cfg["draw"] / 2) * 20)
+    if cfg["max"] == 25:
+        latest = history[0] if history else None
+        repeats = sum(number in latest["dezenas"] for number in numbers) if latest else 0
+        structural = sum([
+            max(0, 100 - abs(even_count - 7.5) * 20),
+            max(0, 100 - abs(sum(numbers) - 195) * 1.2),
+            max(0, 100 - abs(repeats - 9) * 12)
+        ]) / 3
+    else:
+        sums = [sum(draw["dezenas"]) for draw in history]
+        mean = statistics.mean(sums) if sums else cfg["draw"] * (cfg["max"] + 1) / 2
+        variance = statistics.pvariance(sums) if sums else 1
+        sd = math.sqrt(max(1, variance))
+        sum_score = max(0, 100 - abs(sum(numbers) - mean) / sd * 18)
+        repeat_counts = []
+        for i in range(len(history) - 1):
+            previous = set(history[i + 1]["dezenas"])
+            repeat_counts.append(sum(number in previous for number in history[i]["dezenas"]))
+        repeat_mean = statistics.mean(repeat_counts) if repeat_counts else 0.6
+        latest = history[0] if history else None
+        repeats = sum(number in latest["dezenas"] for number in numbers) if latest else 0
+        repeat_score = max(0, 100 - abs(repeats - repeat_mean) * 20)
+        structural = (parity_score + sum_score + repeat_score) / 3
+    return _round2(base * (1 - structural_weight) + structural * structural_weight)
+
+def _generate_portfolio(history, cfg, variant, seed, qty=3):
+    """Reprodução estatística do makeGames() do app; não modifica o gerador de produção."""
+    import random
+    rng = random.Random(seed)
+    original_weights = [0.35, 0.20, 0.15, 0.10, 0.10, 0.10]
+    if variant == "ecg_original":
+        profile_weights, structural_weight, diversity_penalty = original_weights, 0.30, 0.0
+    elif variant == "recencia_reforcada":
+        profile_weights, structural_weight, diversity_penalty = [0.20, 0.30, 0.20, 0.10, 0.05, 0.15], 0.30, 0.0
+    elif variant == "equilibrio_estrutural":
+        profile_weights, structural_weight, diversity_penalty = original_weights, 0.40, 0.0
+    elif variant == "diversificacao_portfolio":
+        profile_weights, structural_weight, diversity_penalty = original_weights, 0.30, 2.0
+    else:
+        raise ValueError("Variante desconhecida: " + variant)
+    profile = _profile_ecg(history, cfg, profile_weights)
+    candidates, seen = [], set()
+    for _ in range(100):
+        keys = [{"n": item["n"], "key": rng.random() ** (1 / max(0.01, item["score"]))} for item in profile]
+        keys.sort(key=lambda item: -item["key"])
+        numbers = sorted(item["n"] for item in keys[:cfg["draw"]])
+        key = "-".join(map(str, numbers))
+        if key not in seen:
+            seen.add(key)
+            candidates.append({"dezenas": numbers, "score": _candidate_score(numbers, profile, history, cfg, structural_weight)})
+    candidates.sort(key=lambda item: -item["score"])
+    if diversity_penalty == 0:
+        return [item["dezenas"] for item in candidates[:qty]]
+    selected, remaining = [], candidates[:]
+    while remaining and len(selected) < qty:
+        best_index, best_value = 0, None
+        for index, candidate in enumerate(remaining):
+            overlap = max([len(set(candidate["dezenas"]) & set(old)) for old in selected] or [0])
+            adjusted = candidate["score"] - diversity_penalty * overlap
+            if best_value is None or adjusted > best_value:
+                best_index, best_value = index, adjusted
+        selected.append(remaining.pop(best_index)["dezenas"])
+    return selected
+
+def _random_portfolio(cfg, seed, qty=3):
+    import random
+    rng = random.Random(seed)
+    portfolio, seen = [], set()
+    while len(portfolio) < qty:
+        numbers = sorted(rng.sample(range(1, cfg["max"] + 1), cfg["draw"]))
+        key = tuple(numbers)
+        if key not in seen:
+            seen.add(key)
+            portfolio.append(numbers)
+    return portfolio
+
+def _portfolio_metrics(portfolio, actual, prize_threshold):
+    hits = [len(set(ticket) & actual) for ticket in portfolio]
+    return {"media_acertos": statistics.mean(hits), "melhor_acerto": max(hits),
+            "jogos_com_faixa_minima": sum(value >= prize_threshold for value in hits),
+            "algum_jogo_com_faixa_minima": int(any(value >= prize_threshold for value in hits))}
 
 def research_experiments(draws, cfg, game):
-    """Compara estratégias de seleção em walk-forward; não altera o gerador do app."""
+    """Compara o gerador real reproduzido e variantes completas em walk-forward."""
+    import random
     max_tests = min(180, max(0, len(draws) - 250))
     if max_tests < 40:
         return {"status": "amostra_insuficiente", "concursos_teste": max_tests,
                 "nota": "São necessários ao menos 40 concursos de teste após 250 concursos de treinamento."}
-    strategies = {
-        "frequencia_250": lambda hist, freq: freq,
-        "frequencia_100": lambda hist, freq: _counts(hist[-100:], cfg["max"]),
-        "frequencia_30": lambda hist, freq: _counts(hist[-30:], cfg["max"]),
-        "recencia_ponderada_30_100": lambda hist, freq: [
-            0.7 * a + 0.3 * b for a, b in zip(_counts(hist[-30:], cfg["max"]), _counts(hist[-100:], cfg["max"]))
-        ],
-    }
-    results = {name: [] for name in strategies}
-    random_baselines = []
+    variants = ["ecg_original", "recencia_reforcada", "equilibrio_estrutural", "diversificacao_portfolio"]
+    records = {name: [] for name in variants + ["aleatorio_uniforme"]}
     first = len(draws) - max_tests
-    import random
+    prize_threshold = 11 if game == "lotofacil" else 4
     for idx in range(first, len(draws)):
-        train, actual = draws[max(0, idx - 250):idx], set(draws[idx]["dezenas"])
-        if len(train) < 250: continue
-        full_counts = _counts(train, cfg["max"])
-        for name, scorer in strategies.items():
-            counts = scorer(train, full_counts)
-            chosen = sorted(range(1, cfg["max"] + 1), key=lambda n: (-counts[n - 1], n))[:cfg["draw"]]
-            results[name].append(len(set(chosen) & actual))
-        rng = random.Random((draws[idx]["concurso"] * 1000003) + cfg["max"])
-        random_baselines.append(len(set(rng.sample(range(1, cfg["max"] + 1), cfg["draw"])) & actual))
-    expected = cfg["draw"] * cfg["draw"] / cfg["max"]
+        history = list(reversed(draws[max(0, idx - 250):idx]))
+        actual = set(draws[idx]["dezenas"])
+        contest = draws[idx]["concurso"]
+        if len(history) < 250: continue
+        for name in variants:
+            portfolio = _generate_portfolio(history, cfg, name, contest * 1009 + cfg["max"], 3)
+            records[name].append(_portfolio_metrics(portfolio, actual, prize_threshold))
+        random_portfolio = _random_portfolio(cfg, contest * 1009 + cfg["max"] + 7919, 3)
+        records["aleatorio_uniforme"].append(_portfolio_metrics(random_portfolio, actual, prize_threshold))
+    baseline = records["aleatorio_uniforme"]
     summary = {}
-    for name, hits in results.items():
-        paired = [a - b for a, b in zip(hits, random_baselines)]
-        mean = statistics.mean(hits) if hits else 0
-        ci = _bootstrap_ci(paired, sum(ord(x) for x in name) + len(draws))
+    for name in variants + ["aleatorio_uniforme"]:
+        rows = records[name]
+        mean_hits = [row["media_acertos"] for row in rows]
+        best_hits = [row["melhor_acerto"] for row in rows]
+        threshold_rates = [row["algum_jogo_com_faixa_minima"] for row in rows]
+        paired_mean = [rows[i]["media_acertos"] - baseline[i]["media_acertos"] for i in range(len(rows))] if name != "aleatorio_uniforme" else [0.0] * len(rows)
+        paired_best = [rows[i]["melhor_acerto"] - baseline[i]["melhor_acerto"] for i in range(len(rows))] if name != "aleatorio_uniforme" else [0.0] * len(rows)
         summary[name] = {
-            "media_acertos": round(mean, 4),
-            "diferenca_vs_esperanca_aleatoria": round(mean - expected, 4),
-            "diferenca_media_vs_baseline_simulado": round(statistics.mean(paired), 4),
-            "ic95_diferenca_pareada": ci,
-            "concursos_teste": len(hits),
-            "vitorias_sobre_baseline_simulado": sum(x > 0 for x in paired),
-            "empates_com_baseline_simulado": sum(x == 0 for x in paired),
-            "derrotas_para_baseline_simulado": sum(x < 0 for x in paired),
+            "media_acertos_por_jogo": round(statistics.mean(mean_hits), 4),
+            "media_melhor_jogo_por_concurso": round(statistics.mean(best_hits), 4),
+            "concursos_com_algum_jogo_na_faixa_minima_pct": round(statistics.mean(threshold_rates) * 100, 3),
+            "media_jogos_na_faixa_minima_por_concurso": round(statistics.mean(row["jogos_com_faixa_minima"] for row in rows), 4),
+            "diferenca_pareada_media_acertos_vs_aleatorio": round(statistics.mean(paired_mean), 4),
+            "ic95_diferenca_media_acertos": _bootstrap_ci(paired_mean, sum(map(ord, name)) + len(draws)),
+            "diferenca_pareada_melhor_jogo_vs_aleatorio": round(statistics.mean(paired_best), 4),
+            "ic95_diferenca_melhor_jogo": _bootstrap_ci(paired_best, sum(map(ord, name)) + len(draws) + 31),
+            "concursos_teste": len(rows)
         }
-    leader = max(summary, key=lambda n: summary[n]["media_acertos"])
-    ci = summary[leader]["ic95_diferenca_pareada"]
-    evidence = "inconclusiva"
-    if ci[0] is not None and ci[0] > 0: evidence = "sinal_positivo_exploratorio"
-    elif ci[1] is not None and ci[1] < 0: evidence = "desempenho_inferior_ao_baseline"
+    deltas = {name: summary[name]["diferenca_pareada_media_acertos_vs_aleatorio"] for name in variants}
+    leader = max(variants, key=lambda name: deltas[name])
+    ci = summary[leader]["ic95_diferenca_media_acertos"]
+    if ci[0] is not None and ci[0] > 0:
+        evidence = "sinal_positivo_exploratorio"
+    elif ci[1] is not None and ci[1] < 0:
+        evidence = "desempenho_inferior_ao_aleatorio"
+    else:
+        evidence = "inconclusiva"
     return {
         "status": "concluido",
-        "desenho": "Walk-forward: 250 concursos anteriores para treino; regra congelada antes do concurso testado; um jogo por estratégia e concurso.",
-        "concursos_teste": len(random_baselines),
+        "desenho": "Walk-forward por concurso: 250 concursos anteriores; 100 candidatos por lote; 3 jogos finais por estratégia; todos avaliados no mesmo resultado futuro. Parâmetros fixos antes do período de teste.",
+        "concursos_teste": len(baseline),
         "periodo_teste": [draws[first]["data"], draws[-1]["data"]],
-        "esperanca_acertos_jogo_aleatorio": round(expected, 4),
-        "baseline_simulado": "Um jogo uniforme independente por concurso, com semente reprodutível.",
+        "limiar_faixa_minima": prize_threshold,
+        "jogos_por_concurso": 3,
+        "candidatos_por_estrategia": 100,
         "estrategias": summary,
-        "melhor_media_observada": leader,
+        "melhor_variante_vs_aleatorio": leader,
+        "diferencas_variantes_vs_gerador_original": {
+            name: round(summary[name]["media_acertos_por_jogo"] - summary["ecg_original"]["media_acertos_por_jogo"], 4)
+            for name in variants if name != "ecg_original"
+        },
         "evidencia": evidence,
-        "decisao": "Não aplicar automaticamente. Exigir repetição em período futuro intocado e validação independente; sinal exploratório não prova vantagem futura.",
+        "decisao": "Nenhuma alteração automática. Uma variante só deve ser considerada após replicação em período futuro intocado, análise de múltiplas comparações e autorização explícita.",
+        "fidelidade": [
+            "O baseline reproduz o scoreProfile do app: pesos 35/20/15/10/10/10 para histórico completo, 30, 20, 15, 10 e 100 concursos.",
+            "Reproduz candidateScore da Lotofácil e da Mega-Sena, 100 candidatos, sorteio ponderado, remoção de duplicatas e seleção dos 3 maiores scores.",
+            "A sequência aleatória é reproduzível por semente; a distribuição do sorteio ponderado corresponde ao algoritmo do navegador, mas não é a mesma sequência de Math.random()."
+        ],
         "limitacoes": [
-            "Testa regras de seleção de dezenas, não reproduz integralmente os 100 candidatos e o score do aplicativo.",
-            "Empates de frequência favorecem menor número; regra determinística, não preditiva.",
-            "Quatro variantes foram comparadas; múltiplas comparações elevam risco de falso positivo.",
-            "Sorteios são independentes; resultados passados não alteram probabilidades futuras."
+            "O experimento testa o padrão de 3 jogos, que é o padrão inicial da interface; outros tamanhos de lote podem produzir métricas diferentes.",
+            "A janela de teste é a mais recente e serve como validação retrospectiva exploratória; deve haver um período futuro intocado para confirmação.",
+            "O limiar de faixa mínima é apenas referência de acertos (11+ Lotofácil; 4+ Mega-Sena), não cálculo de prêmio ou rentabilidade.",
+            "Sorteios são independentes; desempenho histórico não implica vantagem futura."
         ]
     }
 
