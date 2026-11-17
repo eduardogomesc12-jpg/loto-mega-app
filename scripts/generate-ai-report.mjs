@@ -1,11 +1,89 @@
-const fs = require('node:fs/promises');
-const FEEDS={lotofacil:{path:'lotofacil',max:25,draw:15},megasena:{path:'megasena',max:60,draw:6}};
-const ROOT='https://raw.githubusercontent.com/maickon/free-apiloterias/refs/heads/master/database';
-const CAIXA='https://servicebus2.caixa.gov.br/portaldeloterias/api';
-async function getJson(url){const r=await fetch(url,{headers:{'User-Agent':'ECG-Statistical-Intelligence/1.0'}});if(!r.ok)throw Error(r.status+' '+url);return r.json()}
-function normalize(x){const a=x.listaDezenas||x.dezenasSorteadasOrdemSorteio||x.dezenas||[];const n=Number(x.numero||x.numeroDoConcurso||x.concurso);if(!n||!Array.isArray(a)||!a.length)return null;return{concurso:n,data:x.dataApuracao||x.dataPorExtenso||x.data||'',dezenas:a.map(Number).sort((a,b)=>a-b)}}
-async function collect(key,cfg){const map=new Map();for(const url of [ROOT+'/'+cfg.path+'/_todos.json',ROOT+'/'+cfg.path+'/_ultimo.json']){try{const raw=await getJson(url);for(const x of(Array.isArray(raw)?raw:[raw])){const d=normalize(x);if(d&&d.dezenas.length===cfg.draw&&d.dezenas.every(n=>n>=1&&n<=cfg.max))map.set(d.concurso,d)}}catch(e){console.warn('Feed alternativo '+key+': '+e.message)}}try{const d=normalize(await getJson(CAIXA+'/'+cfg.path+'/'));if(d&&d.dezenas.length===cfg.draw&&d.dezenas.every(n=>n>=1&&n<=cfg.max))map.set(d.concurso,d)}catch(e){console.warn('Caixa '+key+': '+e.message)}if(!map.size)throw Error('Sem dados válidos: '+key);return[...map.values()].sort((a,b)=>b.concurso-a.concurso)}
-function stats(draws,cfg){const freq=Array(cfg.max).fill(0),delay=Array(cfg.max).fill(draws.length);draws.forEach((d,i)=>d.dezenas.forEach(n=>{freq[n-1]++;if(delay[n-1]===draws.length)delay[n-1]=i}));const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:0;const sums=draws.map(d=>d.dezenas.reduce((a,n)=>a+n,0));const evens=draws.map(d=>d.dezenas.filter(n=>n%2===0).length);const overlaps=draws.slice(0,-1).map((d,i)=>d.dezenas.filter(n=>draws[i+1].dezenas.includes(n)).length);const rank=freq.map((v,i)=>({dezena:i+1,ocorrencias:v,atraso:delay[i],frequencia_pct:+(100*v/draws.length).toFixed(2)})).sort((a,b)=>b.ocorrencias-a.ocorrencias||a.dezena-b.dezena);const windows={};for(const size of[30,50,100]){const sub=draws.slice(0,size),f=Array(cfg.max).fill(0);sub.forEach(d=>d.dezenas.forEach(n=>f[n-1]++));windows[size]={concursos:sub.length,top15:f.map((v,i)=>({dezena:i+1,ocorrencias:v})).sort((a,b)=>b.ocorrencias-a.ocorrencias||a.dezena-b.dezena).slice(0,15)}}const outcomes=[],count=Math.min(100,Math.max(0,draws.length-50));for(let i=0;i<count;i++){const ix=count-1-i,prior=draws.slice(ix+1);if(prior.length<30)continue;const f=Array(cfg.max).fill(0);prior.forEach(d=>d.dezenas.forEach(n=>f[n-1]++));const picks=f.map((v,j)=>({n:j+1,v})).sort((a,b)=>b.v-a.v||a.n-b.n).slice(0,cfg.draw).map(x=>x.n),actual=new Set(draws[ix].dezenas);outcomes.push(picks.filter(n=>actual.has(n)).length)}return{concursos_analisados:draws.length,ultimo_concurso:draws[0].concurso,data_ultimo:draws[0].data,ranking_15_mais_frequentes:rank.slice(0,15),ranking_15_menos_frequentes:rank.slice(-15).reverse(),frequencia_por_janela:windows,atraso_maximo:Math.max(...delay),soma_media:+avg(sums).toFixed(2),soma_minima:Math.min(...sums),soma_maxima:Math.max(...sums),pares_media:+avg(evens).toFixed(2),repeticao_media_consecutivos:+avg(overlaps).toFixed(3),backtest_walk_forward:{concursos_teste:outcomes.length,media_acertos:+avg(outcomes).toFixed(4),distribuicao_acertos:Object.fromEntries([...new Set(outcomes)].sort((a,b)=>a-b).map(k=>[k,outcomes.filter(x=>x===k).length])),baseline_aleatorio_esperado:+(cfg.draw*cfg.draw/cfg.max).toFixed(4),regra:'Frequências calculadas apenas com concursos anteriores ao teste; baseline é esperança de seleção uniforme'}}
-function outputText(r){for(const item of r.output||[])if(item.type==='message')for(const c of item.content||[])if(c.type==='output_text')return c.text;throw Error('OpenAI sem texto de saída')}
-async function askAI(data){const report={type:'object',additionalProperties:false,required:['resumo','concursos_analisados','fonte','recomendacoes','aviso'],properties:{resumo:{type:'string'},concursos_analisados:{type:'integer'},fonte:{type:'string'},aviso:{type:'string'},recomendacoes:{type:'array',items:{type:'object',additionalProperties:false,required:['titulo','prioridade','hipotese','evidencia','backtest','limitacoes','proximo_teste'],properties:{titulo:{type:'string'},prioridade:{type:'string',enum:['Alta','Média','Baixa','Monitorar']},hipotese:{type:'string'},evidencia:{type:'string'},backtest:{type:'string'},limitacoes:{type:'string'},proximo_teste:{type:'string'}}}}}};const schema={type:'object',additionalProperties:false,required:['modalidades'],properties:{modalidades:{type:'object',additionalProperties:false,required:['lotofacil','megasena'],properties:{lotofacil:report,megasena:report}}}};const instructions='Você é analista estatístico do ECG Loto & Mega. Gere de 1 a 3 recomendações acionáveis por modalidade. Nunca diga que frequência, atraso ou padrões preveem sorteios ou aumentam chances. Não invente métricas, fontes ou significância. Diferencie melhorias de software/testes de vantagem preditiva. Avalie amostra, múltiplas comparações, sobreajuste, estabilidade e vazamento temporal. Baseline é esperança matemática de seleção uniforme. Se dados insuficientes ou sem evidência, diga claramente e recomende não alterar o gerador.';const r=await fetch('https://api.openai.com/v1/responses',{method:'POST',headers:{Authorization:'Bearer '+process.env.OPENAI_API_KEY,'Content-Type':'application/json'},body:JSON.stringify({model:process.env.OPENAI_MODEL||'gpt-6-astra',instructions,input:'Data: '+new Date().toISOString()+'\nEstatísticas calculadas localmente (não invente outras):\n'+JSON.stringify(data),text:{format:{type:'json_schema',name:'ecg_statistical_report',strict:true,schema}},max_output_tokens:5000})});if(!r.ok)throw Error('OpenAI '+r.status+': '+(await r.text()).slice(0,1000));return JSON.parse(outputText(await r.json()))}
-(async()=>{if(!process.env.OPENAI_API_KEY)throw Error('Configure OPENAI_API_KEY em GitHub Actions Secrets');const data={};for(const[k,cfg]of Object.entries(FEEDS))data[k]=stats(await collect(k,cfg),cfg);const ai=await askAI(data);const out={schema_version:1,gerado_em:new Date().toISOString(),modelo:process.env.OPENAI_MODEL||'gpt-6-astra',fonte:'Resultados públicos Caixa e base histórica free-apiloterias; estatísticas calculadas localmente no GitHub Actions',modalidades:ai.modalidades,metadados:Object.fromEntries(Object.entries(data).map(([k,v])=>[k,{concursos:v.concursos_analisados,ultimo_concurso:v.ultimo_concurso,data_ultimo:v.data_ultimo}]))};await fs.mkdir('data',{recursive:true});await fs.writeFile('data/inteligencia.json',JSON.stringify(out,null,2)+'\n');console.log('Relatório ECG gerado')})().catch(e=>{console.error(e);process.exit(1)});
+import fs from "node:fs/promises";
+
+const REPORT_PATH = "reports/latest.json";
+const OUTPUT_PATH = "data/inteligencia.json";
+const MODEL = process.env.OPENAI_MODEL || "gpt-4.1-mini";
+const reportSchema = {
+  type: "object", additionalProperties: false,
+  required: ["resumo", "concursos_analisados", "fonte", "recomendacoes", "aviso"],
+  properties: {
+    resumo: { type: "string" }, concursos_analisados: { type: "integer" },
+    fonte: { type: "string" }, aviso: { type: "string" },
+    recomendacoes: { type: "array", items: {
+      type: "object", additionalProperties: false,
+      required: ["titulo", "prioridade", "hipotese", "evidencia", "backtest", "limitacoes", "proximo_teste"],
+      properties: {
+        titulo: { type: "string" }, prioridade: { type: "string", enum: ["Alta", "Média", "Baixa", "Monitorar"] },
+        hipotese: { type: "string" }, evidencia: { type: "string" }, backtest: { type: "string" },
+        limitacoes: { type: "string" }, proximo_teste: { type: "string" }
+      }
+    }}
+  }
+};
+
+function extractOutputText(response) {
+  if (typeof response.output_text === "string") return response.output_text;
+  for (const item of response.output ?? []) {
+    if (item.type !== "message") continue;
+    for (const content of item.content ?? []) {
+      if (content.type === "output_text" && typeof content.text === "string") return content.text;
+    }
+  }
+  throw new Error("A API respondeu sem conteúdo textual estruturado.");
+}
+
+async function generateWithOpenAI(data) {
+  const instructions = [
+    "Você é o analista estatístico do ECG Loto & Mega.",
+    "Use exclusivamente os números e resultados contidos no relatório local fornecido.",
+    "Produza de 1 a 3 recomendações acionáveis por modalidade; se não houver evidência, diga isso explicitamente.",
+    "Cada recomendação deve incluir hipótese, evidência, métrica de backtest, limitações, risco de regressão e próximo teste.",
+    "Não afirme que frequência, atraso, pares/ímpares ou qualquer padrão prevê resultados ou aumenta a chance matemática de ganhar.",
+    "Não invente métricas, fontes, significância ou concursos. Diferencie qualidade de software de suposta vantagem preditiva.",
+    "Avalie tamanho da amostra, múltiplas comparações, sobreajuste e vazamento temporal."
+  ].join(" ");
+
+  const response = await fetch("https://api.openai.com/v1/responses", {
+    method: "POST",
+    headers: { Authorization: "Bearer " + process.env.OPENAI_API_KEY, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: MODEL, instructions,
+      input: "Data de geração: " + new Date().toISOString() + "\nRelatório estatístico validado localmente:\n" + JSON.stringify(data),
+      text: { format: { type: "json_schema", name: "ecg_statistical_report", strict: true,
+        schema: { type: "object", additionalProperties: false, required: ["modalidades"],
+          properties: { modalidades: { type: "object", additionalProperties: false,
+            required: ["lotofacil", "megasena"], properties: { lotofacil: reportSchema, megasena: reportSchema }
+          }}
+        }
+      }},
+      max_output_tokens: 5000
+    })
+  });
+  if (!response.ok) throw new Error("OpenAI HTTP " + response.status + ": " + (await response.text()).slice(0, 1200));
+  return JSON.parse(extractOutputText(await response.json()));
+}
+
+async function main() {
+  const statistics = JSON.parse(await fs.readFile(REPORT_PATH, "utf8"));
+  if (!statistics.games?.lotofacil || !statistics.games?.megasena) throw new Error("Relatório estatístico incompleto; IA não será executada.");
+  const output = {
+    schema_version: 2, gerado_em: new Date().toISOString(), fonte_dados: statistics.source,
+    status_ia: "aguardando_configuracao", modelo: MODEL,
+    metadados: Object.fromEntries(Object.entries(statistics.games).map(([key, value]) =>
+      [key, { ultimo_concurso: value.contest, data_ultimo: value.date, concursos_analisados: value.draw_count }])),
+    modalidades: null,
+    aviso: "Frequências e atrasos são descritivos e não aumentam a probabilidade matemática de ganhar."
+  };
+  if (process.env.OPENAI_API_KEY) {
+    output.modalidades = (await generateWithOpenAI(statistics)).modalidades;
+    output.status_ia = "gerado";
+  } else {
+    output.aviso_ia = "Configure OPENAI_API_KEY em Settings > Secrets and variables > Actions para ativar a análise generativa. Nunca insira a chave no código ou no navegador.";
+    console.warn("OPENAI_API_KEY ausente: relatório local será publicado; IA ficará aguardando o Secret.");
+  }
+  await fs.mkdir("data", { recursive: true });
+  await fs.writeFile(OUTPUT_PATH, JSON.stringify(output, null, 2) + "\n", "utf8");
+  console.log("Relatório ECG salvo em " + OUTPUT_PATH + " (IA: " + output.status_ia + ").");
+}
+
+main().catch(error => { console.error(error); process.exitCode = 1; });
