@@ -1,4 +1,4 @@
-name: ECG - Inteligência Estatística com IA
+name: ECG - Inteligência Estatística Gratuita
 on:
   push:
     branches: [main]
@@ -6,20 +6,16 @@ on:
       - "scripts/generate-ai-report.mjs"
       - ".github/workflows/ecg-ai-report.yml"
   schedule:
-    - cron: "0 21 * * *"
+    - cron: "15 21 * * *"
   workflow_dispatch:
 permissions:
   contents: write
-  pages: write
-  id-token: write
 concurrency:
   group: ecg-report-publication
   cancel-in-progress: false
 jobs:
   generate-report:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
     steps:
       - name: Baixar branch main
         uses: actions/checkout@v4
@@ -30,14 +26,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - name: Validar sintaxe da integração
+      - name: Validar sintaxe do motor local
         run: node --check scripts/generate-ai-report.mjs
-      - name: Gerar relatório com IA protegida
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
+      - name: Gerar inteligência estatística sem API externa
         run: node scripts/generate-ai-report.mjs
-      - name: Publicar relatório JSON sem perder commits concorrentes
+      - name: Publicar JSON atualizado
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -45,17 +38,8 @@ jobs:
           if git diff --cached --quiet; then
             echo "Sem alterações"
           else
-            git commit -m "Atualiza relatório diário de inteligência ECG"
+            git commit -m "Atualiza inteligência estatística gratuita ECG"
             git fetch origin main
             git rebase origin/main
             git push origin HEAD:main
           fi
-      - name: Configurar GitHub Pages
-        uses: actions/configure-pages@v5
-      - name: Preparar site atualizado
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: .
-      - name: Publicar relatório no GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
