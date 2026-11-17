@@ -95,7 +95,8 @@ function candidateScore(g,profile,history){
    Math.max(0,100-Math.abs(sum-195)*1.2),
    Math.max(0,100-Math.abs(repeats-9)*12)
   ].reduce((a,b)=>a+b,0)/3;
-  const structuralWeight=Number(approvedMethod.modalidades?.[mode]?.peso_estrutural??.3);\n  return Math.round((base*(1-structuralWeight)+structural*structuralWeight+Number.EPSILON)*100)/100;
+  const structuralWeight=Number(approvedMethod.modalidades?.[mode]?.peso_estrutural??.3);
+  return Math.round((base*(1-structuralWeight)+structural*structuralWeight+Number.EPSILON)*100)/100;
  }
  // Mega-Sena: calibração com o histórico disponível, sem impor soma fixa.
  const sums=history.map(d=>d.dezenas.reduce((a,n)=>a+n,0));
@@ -113,7 +114,8 @@ function candidateScore(g,profile,history){
  const repeats=latest?g.filter(n=>latest.dezenas.includes(n)).length:0;
  const repeatScore=Math.max(0,100-Math.abs(repeats-repeatMean)*20);
  const structural=(parityScore+sumScore+repeatScore)/3;
- const structuralWeight=Number(approvedMethod.modalidades?.[mode]?.peso_estrutural??.3);\n return Math.round((base*(1-structuralWeight)+structural*structuralWeight+Number.EPSILON)*100)/100;
+ const structuralWeight=Number(approvedMethod.modalidades?.[mode]?.peso_estrutural??.3);
+ return Math.round((base*(1-structuralWeight)+structural*structuralWeight+Number.EPSILON)*100)/100;
 }
 function makeGames(){
  const c=C[mode],qty=Math.max(1,Math.min(10,Number($('gamecount').value)||3)),profile=scoreProfile(),history=all[mode];
