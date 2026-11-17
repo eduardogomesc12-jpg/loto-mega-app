@@ -2,89 +2,100 @@ import fs from "node:fs/promises";
 
 const REPORT_PATH = "reports/latest.json";
 const OUTPUT_PATH = "data/inteligencia.json";
-const MODEL = process.env.OPENAI_MODEL || "gpt-4.1-mini";
-const reportSchema = {
-  type: "object", additionalProperties: false,
-  required: ["resumo", "concursos_analisados", "fonte", "recomendacoes", "aviso"],
-  properties: {
-    resumo: { type: "string" }, concursos_analisados: { type: "integer" },
-    fonte: { type: "string" }, aviso: { type: "string" },
-    recomendacoes: { type: "array", items: {
-      type: "object", additionalProperties: false,
-      required: ["titulo", "prioridade", "hipotese", "evidencia", "backtest", "limitacoes", "proximo_teste"],
-      properties: {
-        titulo: { type: "string" }, prioridade: { type: "string", enum: ["Alta", "Média", "Baixa", "Monitorar"] },
-        hipotese: { type: "string" }, evidencia: { type: "string" }, backtest: { type: "string" },
-        limitacoes: { type: "string" }, proximo_teste: { type: "string" }
-      }
-    }}
-  }
-};
 
-function extractOutputText(response) {
-  if (typeof response.output_text === "string") return response.output_text;
-  for (const item of response.output ?? []) {
-    if (item.type !== "message") continue;
-    for (const content of item.content ?? []) {
-      if (content.type === "output_text" && typeof content.text === "string") return content.text;
-    }
-  }
-  throw new Error("A API respondeu sem conteúdo textual estruturado.");
+function recommendation(titulo, prioridade, hipotese, evidencia, backtest, limitacoes, proximo_teste) {
+  return { titulo, prioridade, hipotese, evidencia, backtest, limitacoes, proximo_teste };
 }
 
-async function generateWithOpenAI(data) {
-  const instructions = [
-    "Você é o analista estatístico do ECG Loto & Mega.",
-    "Use exclusivamente os números e resultados contidos no relatório local fornecido.",
-    "Produza de 1 a 3 recomendações acionáveis por modalidade; se não houver evidência, diga isso explicitamente.",
-    "Cada recomendação deve incluir hipótese, evidência, métrica de backtest, limitações, risco de regressão e próximo teste.",
-    "Não afirme que frequência, atraso, pares/ímpares ou qualquer padrão prevê resultados ou aumenta a chance matemática de ganhar.",
-    "Não invente métricas, fontes, significância ou concursos. Diferencie qualidade de software de suposta vantagem preditiva.",
-    "Avalie tamanho da amostra, múltiplas comparações, sobreajuste e vazamento temporal."
-  ].join(" ");
+function analyzeGame(game, label) {
+  const cfg = game;
+  const recent = cfg.frequency_windows?.["30"];
+  const previous = cfg.frequency_windows?.["100"];
+  const top = cfg.top15 || [];
+  const tests = cfg.backtesting || [];
+  const bestTest = tests.find(x => x.concursos_teste > 0 && x.media_acertos !== null);
+  const windowTop = recent?.top15 || [];
+  const sample = Number(cfg.draw_count || 0);
+  const recommendations = [];
 
-  const response = await fetch("https://api.openai.com/v1/responses", {
-    method: "POST",
-    headers: { Authorization: "Bearer " + (process.env.OPENAI_API_KEY || "").trim(), "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: MODEL, instructions,
-      input: "Data de geração: " + new Date().toISOString() + "\nRelatório estatístico validado localmente:\n" + JSON.stringify(data),
-      text: { format: { type: "json_schema", name: "ecg_statistical_report", strict: true,
-        schema: { type: "object", additionalProperties: false, required: ["modalidades"],
-          properties: { modalidades: { type: "object", additionalProperties: false,
-            required: ["lotofacil", "megasena"], properties: { lotofacil: reportSchema, megasena: reportSchema }
-          }}
-        }
-      }},
-      max_output_tokens: 5000
-    })
-  });
-  if (!response.ok) throw new Error("OpenAI HTTP " + response.status + ": " + (await response.text()).slice(0, 1200));
-  return JSON.parse(extractOutputText(await response.json()));
+  recommendations.push(recommendation(
+    "Preservar a separação entre histórico e janela recente",
+    "Alta",
+    "Acompanhar se as frequências recentes diferem do histórico sem transformar oscilações em previsão.",
+    "Foram analisados " + sample + " concursos. A janela recente contém " + Number(recent?.concursos || 0) + " concursos; o ranking completo contém " + top.length + " dezenas destacadas.",
+    "Análise descritiva; não constitui teste de capacidade preditiva.",
+    "Frequências variam naturalmente em sorteios independentes. Rankings podem mudar com o tamanho da janela.",
+    "Comparar rankings em janelas de 30, 50 e 100 concursos e registrar a estabilidade antes de qualquer alteração no gerador."
+  ));
+
+  if (windowTop.length) {
+    const names = windowTop.slice(0, 5).map(x => String(x.number).padStart(2, "0") + " (" + x.count + ")").join(", ");
+    recommendations.push(recommendation(
+      "Monitorar a concentração do ranking recente",
+      "Monitorar",
+      "Verificar se as dezenas mais frequentes na janela curta permanecem estáveis em janelas maiores.",
+      "Top 5 na janela de " + Number(recent.concursos) + " concursos: " + names + ". Valores representam contagens observadas, não probabilidades futuras.",
+      "Comparação descritiva entre contagens; não demonstra vantagem sobre sorteio uniforme.",
+      "Janela curta tem maior variabilidade e pode destacar extremos por acaso. Não selecionar dezenas apenas por este ranking.",
+      "Recalcular a posição dessas dezenas nas janelas de 50 e 100 concursos e medir a persistência do ranking."
+    ));
+  }
+
+  if (bestTest) {
+    const delta = Number(bestTest.diferenca_vs_baseline || 0);
+    const sign = delta > 0 ? "+" : "";
+    recommendations.push(recommendation(
+      "Acompanhar o backtesting walk-forward",
+      "Alta",
+      "Manter a avaliação temporal como critério obrigatório antes de aprovar mudanças no método estatístico.",
+      "Janela de treinamento " + bestTest.janela_treinamento + "; " + bestTest.concursos_teste + " concursos de teste; média observada " + bestTest.media_acertos + " acertos; referência aleatória esperada " + bestTest.baseline_aleatorio_esperado + "; diferença " + sign + delta + ".",
+      "Resultado calculado em sequência temporal, usando somente concursos anteriores no treinamento. A referência informada é a esperança matemática de uma seleção uniforme.",
+      "O valor esperado não substitui uma simulação de distribuição nem intervalo de confiança. Diferença observada não comprova superioridade; há risco de sobreajuste e múltiplas comparações.",
+      "Executar simulações aleatórias com o mesmo número de testes, calcular distribuição de resultados e repetir em períodos futuros sem reajustar parâmetros."
+    ));
+  } else {
+    recommendations.push(recommendation(
+      "Aumentar a base de validação temporal",
+      "Média",
+      "Ampliar a quantidade de concursos disponíveis para avaliar o método fora da amostra.",
+      "Não há janela de backtesting com tamanho suficiente registrada neste relatório.",
+      "Backtesting indisponível para esta amostra.",
+      "Sem testes temporais suficientes, não é possível avaliar estabilidade ou desempenho relativo.",
+      "Acumular histórico e executar walk-forward com janelas predefinidas antes de comparar versões."
+    ));
+  }
+
+  return {
+    resumo: label + ": análise local de " + sample + " concursos, com frequências, atrasos e validação temporal. As métricas descrevem o passado e não preveem sorteios.",
+    concursos_analisados: sample,
+    fonte: cfg.official_source || "Histórico público validado",
+    recomendacoes: recommendations,
+    aviso: "Sorteios são aleatórios e independentes. Frequência, atraso e padrões históricos não aumentam a probabilidade matemática de ganhar."
+  };
 }
 
 async function main() {
   const statistics = JSON.parse(await fs.readFile(REPORT_PATH, "utf8"));
-  if (!statistics.games?.lotofacil || !statistics.games?.megasena) throw new Error("Relatório estatístico incompleto; IA não será executada.");
+  if (!statistics.games?.lotofacil || !statistics.games?.megasena) {
+    throw new Error("Relatório estatístico incompleto; publicação bloqueada.");
+  }
   const output = {
-    schema_version: 2, gerado_em: new Date().toISOString(), fonte_dados: statistics.source,
-    status_ia: "aguardando_configuracao", modelo: MODEL,
+    schema_version: 3,
+    gerado_em: new Date().toISOString(),
+    fonte_dados: statistics.source,
+    status_ia: "gerado_localmente",
+    modelo: "ECG Motor Estatístico Local v1",
     metadados: Object.fromEntries(Object.entries(statistics.games).map(([key, value]) =>
       [key, { ultimo_concurso: value.contest, data_ultimo: value.date, concursos_analisados: value.draw_count }])),
-    modalidades: null,
-    aviso: "Frequências e atrasos são descritivos e não aumentam a probabilidade matemática de ganhar."
+    modalidades: {
+      lotofacil: analyzeGame(statistics.games.lotofacil, "Lotofácil"),
+      megasena: analyzeGame(statistics.games.megasena, "Mega-Sena")
+    },
+    aviso: "Relatório gerado localmente, sem API paga. Estatística descritiva não é previsão."
   };
-  const apiKey = (process.env.OPENAI_API_KEY || "").trim();
-  if (apiKey && apiKey !== "\\") {
-    output.modalidades = (await generateWithOpenAI(statistics)).modalidades;
-    output.status_ia = "gerado";
-  } else {
-    output.aviso_ia = "Configure OPENAI_API_KEY em Settings > Secrets and variables > Actions para ativar a análise generativa. Nunca insira a chave no código ou no navegador.";
-    console.warn("OPENAI_API_KEY ausente: relatório local será publicado; IA ficará aguardando o Secret.");
-  }
   await fs.mkdir("data", { recursive: true });
   await fs.writeFile(OUTPUT_PATH, JSON.stringify(output, null, 2) + "\n", "utf8");
-  console.log("Relatório ECG salvo em " + OUTPUT_PATH + " (IA: " + output.status_ia + ").");
+  console.log("Relatório ECG local salvo em " + OUTPUT_PATH + " para Lotofácil e Mega-Sena.");
 }
 
 main().catch(error => { console.error(error); process.exitCode = 1; });
