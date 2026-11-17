@@ -32,6 +32,7 @@ jobs:
       - name: Validar sintaxe e configuração do método versionado
         run: |
           node --check scripts/apply-approved-method.mjs
+          node tests/test_method_promotion.mjs
           python -m json.tool data/metodo-aprovado.json > /dev/null
           python -m py_compile scripts/ecg_daily_analysis.py
           python -m unittest discover -s tests -p "test_*.py" -v
