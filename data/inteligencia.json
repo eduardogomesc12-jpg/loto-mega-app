@@ -1,9 +1,9 @@
 {
   "schema_version": 3,
-  "gerado_em": "2026-11-17T18:31:29.249Z",
+  "gerado_em": "2026-11-17T19:14:19.983Z",
   "fonte_dados": "Feed histórico público com conferência do último concurso e preenchimento incremental via endpoint público do Portal Loterias CAIXA.",
   "status_ia": "gerado_localmente",
-  "modelo": "ECG Motor Estatístico Local v1",
+  "modelo": "ECG Laboratório Estatístico Local v2",
   "metadados": {
     "lotofacil": {
       "ultimo_concurso": 3831,
@@ -18,9 +18,83 @@
   },
   "modalidades": {
     "lotofacil": {
-      "resumo": "Lotofácil: análise local de 3831 concursos, com frequências, atrasos e validação temporal. As métricas descrevem o passado e não preveem sorteios.",
+      "resumo": "Lotofácil: laboratório estatístico local em 3831 concursos. Experimentos independentes e temporais são exploratórios; não preveem sorteios.",
       "concursos_analisados": 3831,
       "fonte": "https://servicebus2.caixa.gov.br/portaldeloterias/api/lotofacil",
+      "experimentos": {
+        "status": "concluido",
+        "desenho": "Walk-forward: 250 concursos anteriores para treino; regra congelada antes do concurso testado; um jogo por estratégia e concurso.",
+        "concursos_teste": 180,
+        "periodo_teste": [
+          "02/04/2026",
+          "16/11/2026"
+        ],
+        "esperanca_acertos_jogo_aleatorio": 9,
+        "baseline_simulado": "Um jogo uniforme independente por concurso, com semente reprodutível.",
+        "estrategias": {
+          "frequencia_250": {
+            "media_acertos": 8.8611,
+            "diferenca_vs_esperanca_aleatoria": -0.1389,
+            "diferenca_media_vs_baseline_simulado": -0.0722,
+            "ic95_diferenca_pareada": [
+              -0.3389,
+              0.1944
+            ],
+            "concursos_teste": 180,
+            "vitorias_sobre_baseline_simulado": 69,
+            "empates_com_baseline_simulado": 37,
+            "derrotas_para_baseline_simulado": 74
+          },
+          "frequencia_100": {
+            "media_acertos": 8.9833,
+            "diferenca_vs_esperanca_aleatoria": -0.0167,
+            "diferenca_media_vs_baseline_simulado": 0.05,
+            "ic95_diferenca_pareada": [
+              -0.2111,
+              0.2833
+            ],
+            "concursos_teste": 180,
+            "vitorias_sobre_baseline_simulado": 68,
+            "empates_com_baseline_simulado": 40,
+            "derrotas_para_baseline_simulado": 72
+          },
+          "frequencia_30": {
+            "media_acertos": 9.0611,
+            "diferenca_vs_esperanca_aleatoria": 0.0611,
+            "diferenca_media_vs_baseline_simulado": 0.1278,
+            "ic95_diferenca_pareada": [
+              -0.1444,
+              0.4111
+            ],
+            "concursos_teste": 180,
+            "vitorias_sobre_baseline_simulado": 81,
+            "empates_com_baseline_simulado": 35,
+            "derrotas_para_baseline_simulado": 64
+          },
+          "recencia_ponderada_30_100": {
+            "media_acertos": 9.0222,
+            "diferenca_vs_esperanca_aleatoria": 0.0222,
+            "diferenca_media_vs_baseline_simulado": 0.0889,
+            "ic95_diferenca_pareada": [
+              -0.1556,
+              0.3389
+            ],
+            "concursos_teste": 180,
+            "vitorias_sobre_baseline_simulado": 78,
+            "empates_com_baseline_simulado": 38,
+            "derrotas_para_baseline_simulado": 64
+          }
+        },
+        "melhor_media_observada": "frequencia_30",
+        "evidencia": "inconclusiva",
+        "decisao": "Não aplicar automaticamente. Exigir repetição em período futuro intocado e validação independente; sinal exploratório não prova vantagem futura.",
+        "limitacoes": [
+          "Testa regras de seleção de dezenas, não reproduz integralmente os 100 candidatos e o score do aplicativo.",
+          "Empates de frequência favorecem menor número; regra determinística, não preditiva.",
+          "Quatro variantes foram comparadas; múltiplas comparações elevam risco de falso positivo.",
+          "Sorteios são independentes; resultados passados não alteram probabilidades futuras."
+        ]
+      },
       "recomendacoes": [
         {
           "titulo": "Preservar a separação entre histórico e janela recente",
@@ -48,14 +122,97 @@
           "backtest": "Resultado calculado em sequência temporal, usando somente concursos anteriores no treinamento. A referência informada é a esperança matemática de uma seleção uniforme.",
           "limitacoes": "O valor esperado não substitui uma simulação de distribuição nem intervalo de confiança. Diferença observada não comprova superioridade; há risco de sobreajuste e múltiplas comparações.",
           "proximo_teste": "Executar simulações aleatórias com o mesmo número de testes, calcular distribuição de resultados e repetir em períodos futuros sem reajustar parâmetros."
+        },
+        {
+          "titulo": "Experimento walk-forward: comparação de estratégias",
+          "prioridade": "Manter método atual",
+          "hipotese": "Verificar se janelas históricas diferentes ou ponderação de recência superam uma seleção uniforme fora da amostra.",
+          "evidencia": "Foram testadas 180 previsões históricas. Melhor média observada: frequencia_30 (9.0611 acertos por jogo).",
+          "backtest": "Diferença média pareada contra baseline aleatório: 0.1278; IC95%: [-0.1444, 0.4111]. Evidência: inconclusiva.",
+          "limitacoes": "Testa regras de seleção de dezenas, não reproduz integralmente os 100 candidatos e o score do aplicativo. Empates de frequência favorecem menor número; regra determinística, não preditiva. Quatro variantes foram comparadas; múltiplas comparações elevam risco de falso positivo. Sorteios são independentes; resultados passados não alteram probabilidades futuras.",
+          "proximo_teste": "Repetir a hipótese em concursos futuros ainda não usados e em uma segunda janela temporal. Não alterar o gerador antes de validação independente e autorização."
         }
       ],
       "aviso": "Sorteios são aleatórios e independentes. Frequência, atraso e padrões históricos não aumentam a probabilidade matemática de ganhar."
     },
     "megasena": {
-      "resumo": "Mega-Sena: análise local de 3086 concursos, com frequências, atrasos e validação temporal. As métricas descrevem o passado e não preveem sorteios.",
+      "resumo": "Mega-Sena: laboratório estatístico local em 3086 concursos. Experimentos independentes e temporais são exploratórios; não preveem sorteios.",
       "concursos_analisados": 3086,
       "fonte": "https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena",
+      "experimentos": {
+        "status": "concluido",
+        "desenho": "Walk-forward: 250 concursos anteriores para treino; regra congelada antes do concurso testado; um jogo por estratégia e concurso.",
+        "concursos_teste": 180,
+        "periodo_teste": [
+          "28/08/2025",
+          "15/11/2026"
+        ],
+        "esperanca_acertos_jogo_aleatorio": 0.6,
+        "baseline_simulado": "Um jogo uniforme independente por concurso, com semente reprodutível.",
+        "estrategias": {
+          "frequencia_250": {
+            "media_acertos": 0.5167,
+            "diferenca_vs_esperanca_aleatoria": -0.0833,
+            "diferenca_media_vs_baseline_simulado": -0.0444,
+            "ic95_diferenca_pareada": [
+              -0.1778,
+              0.0889
+            ],
+            "concursos_teste": 180,
+            "vitorias_sobre_baseline_simulado": 46,
+            "empates_com_baseline_simulado": 83,
+            "derrotas_para_baseline_simulado": 51
+          },
+          "frequencia_100": {
+            "media_acertos": 0.5833,
+            "diferenca_vs_esperanca_aleatoria": -0.0167,
+            "diferenca_media_vs_baseline_simulado": 0.0222,
+            "ic95_diferenca_pareada": [
+              -0.1389,
+              0.1667
+            ],
+            "concursos_teste": 180,
+            "vitorias_sobre_baseline_simulado": 51,
+            "empates_com_baseline_simulado": 79,
+            "derrotas_para_baseline_simulado": 50
+          },
+          "frequencia_30": {
+            "media_acertos": 0.5389,
+            "diferenca_vs_esperanca_aleatoria": -0.0611,
+            "diferenca_media_vs_baseline_simulado": -0.0222,
+            "ic95_diferenca_pareada": [
+              -0.1667,
+              0.1222
+            ],
+            "concursos_teste": 180,
+            "vitorias_sobre_baseline_simulado": 53,
+            "empates_com_baseline_simulado": 73,
+            "derrotas_para_baseline_simulado": 54
+          },
+          "recencia_ponderada_30_100": {
+            "media_acertos": 0.5667,
+            "diferenca_vs_esperanca_aleatoria": -0.0333,
+            "diferenca_media_vs_baseline_simulado": 0.0056,
+            "ic95_diferenca_pareada": [
+              -0.1333,
+              0.1444
+            ],
+            "concursos_teste": 180,
+            "vitorias_sobre_baseline_simulado": 48,
+            "empates_com_baseline_simulado": 84,
+            "derrotas_para_baseline_simulado": 48
+          }
+        },
+        "melhor_media_observada": "frequencia_100",
+        "evidencia": "inconclusiva",
+        "decisao": "Não aplicar automaticamente. Exigir repetição em período futuro intocado e validação independente; sinal exploratório não prova vantagem futura.",
+        "limitacoes": [
+          "Testa regras de seleção de dezenas, não reproduz integralmente os 100 candidatos e o score do aplicativo.",
+          "Empates de frequência favorecem menor número; regra determinística, não preditiva.",
+          "Quatro variantes foram comparadas; múltiplas comparações elevam risco de falso positivo.",
+          "Sorteios são independentes; resultados passados não alteram probabilidades futuras."
+        ]
+      },
       "recomendacoes": [
         {
           "titulo": "Preservar a separação entre histórico e janela recente",
@@ -83,6 +240,15 @@
           "backtest": "Resultado calculado em sequência temporal, usando somente concursos anteriores no treinamento. A referência informada é a esperança matemática de uma seleção uniforme.",
           "limitacoes": "O valor esperado não substitui uma simulação de distribuição nem intervalo de confiança. Diferença observada não comprova superioridade; há risco de sobreajuste e múltiplas comparações.",
           "proximo_teste": "Executar simulações aleatórias com o mesmo número de testes, calcular distribuição de resultados e repetir em períodos futuros sem reajustar parâmetros."
+        },
+        {
+          "titulo": "Experimento walk-forward: comparação de estratégias",
+          "prioridade": "Manter método atual",
+          "hipotese": "Verificar se janelas históricas diferentes ou ponderação de recência superam uma seleção uniforme fora da amostra.",
+          "evidencia": "Foram testadas 180 previsões históricas. Melhor média observada: frequencia_100 (0.5833 acertos por jogo).",
+          "backtest": "Diferença média pareada contra baseline aleatório: 0.0222; IC95%: [-0.1389, 0.1667]. Evidência: inconclusiva.",
+          "limitacoes": "Testa regras de seleção de dezenas, não reproduz integralmente os 100 candidatos e o score do aplicativo. Empates de frequência favorecem menor número; regra determinística, não preditiva. Quatro variantes foram comparadas; múltiplas comparações elevam risco de falso positivo. Sorteios são independentes; resultados passados não alteram probabilidades futuras.",
+          "proximo_teste": "Repetir a hipótese em concursos futuros ainda não usados e em uma segunda janela temporal. Não alterar o gerador antes de validação independente e autorização."
         }
       ],
       "aviso": "Sorteios são aleatórios e independentes. Frequência, atraso e padrões históricos não aumentam a probabilidade matemática de ganhar."
