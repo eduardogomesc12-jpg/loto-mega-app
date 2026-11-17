@@ -44,10 +44,10 @@ jobs:
           python-version: "3.12"
       - name: Aplicar proposta somente com autorização e evidência aprovada
         env:
-          METHOD_ACTION: \${{ inputs.action }}
-          METHOD_APPROVAL: \${{ inputs.approval }}
-          PROPOSAL_ID: \${{ inputs.proposal_id }}
-          METHOD_VERSION: \${{ inputs.version }}
+          METHOD_ACTION: ${{ inputs.action }}
+          METHOD_APPROVAL: ${{ inputs.approval }}
+          PROPOSAL_ID: ${{ inputs.proposal_id }}
+          METHOD_VERSION: ${{ inputs.version }}
         run: node scripts/apply-approved-method.mjs
       - name: Validar código e testes antes de publicar
         run: |
@@ -60,5 +60,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/metodo-aprovado.json data/historico-versoes.json backups/metodos
           git diff --cached --check
-          git commit -m "ECG: \${{ inputs.action }} de método autorizado"
+          git commit -m "ECG: ${{ inputs.action }} de método autorizado"
           git push origin HEAD:main
