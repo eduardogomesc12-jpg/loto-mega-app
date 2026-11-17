@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-17T19:11:15.157967+00:00",
+  "generated_at": "2026-11-17T19:22:57.285592+00:00",
   "source": "Feed histórico público com conferência do último concurso e preenchimento incremental via endpoint público do Portal Loterias CAIXA.",
   "notice": "Estatística descritiva, não preditiva. Frequência e atraso não alteram a probabilidade matemática de sorteios futuros.",
   "games": {
@@ -8,76 +8,160 @@
       "label": "Lotofácil",
       "experimentos_pesquisa": {
         "status": "concluido",
-        "desenho": "Walk-forward: 250 concursos anteriores para treino; regra congelada antes do concurso testado; um jogo por estratégia e concurso.",
+        "desenho": "Walk-forward por concurso: 250 concursos anteriores; 100 candidatos por lote; 3 jogos finais por estratégia; todos avaliados no mesmo resultado futuro. Parâmetros fixos antes do período de teste.",
         "concursos_teste": 180,
         "periodo_teste": [
           "02/04/2026",
           "16/11/2026"
         ],
-        "esperanca_acertos_jogo_aleatorio": 9.0,
-        "baseline_simulado": "Um jogo uniforme independente por concurso, com semente reprodutível.",
+        "limiar_faixa_minima": 11,
+        "jogos_por_concurso": 3,
+        "candidatos_por_estrategia": 100,
         "estrategias": {
-          "frequencia_250": {
-            "media_acertos": 8.8611,
-            "diferenca_vs_esperanca_aleatoria": -0.1389,
-            "diferenca_media_vs_baseline_simulado": -0.0722,
-            "ic95_diferenca_pareada": [
-              -0.3389,
-              0.1944
+          "ecg_original": {
+            "media_acertos_por_jogo": 9.0481,
+            "media_melhor_jogo_por_concurso": 9.9111,
+            "concursos_com_algum_jogo_na_faixa_minima_pct": 26.667,
+            "media_jogos_na_faixa_minima_por_concurso": 0.3722,
+            "diferenca_pareada_media_acertos_vs_aleatorio": 0.1241,
+            "ic95_diferenca_media_acertos": [
+              -0.0389,
+              0.2926
             ],
-            "concursos_teste": 180,
-            "vitorias_sobre_baseline_simulado": 69,
-            "empates_com_baseline_simulado": 37,
-            "derrotas_para_baseline_simulado": 74
+            "diferenca_pareada_melhor_jogo_vs_aleatorio": -0.1,
+            "ic95_diferenca_melhor_jogo": [
+              -0.3167,
+              0.1111
+            ],
+            "diferenca_pareada_media_vs_ecg_original": 0.0,
+            "ic95_diferenca_vs_ecg_original": [
+              0.0,
+              0.0
+            ],
+            "vitorias_vs_ecg_original": 0,
+            "empates_vs_ecg_original": 180,
+            "derrotas_vs_ecg_original": 0,
+            "concursos_teste": 180
           },
-          "frequencia_100": {
-            "media_acertos": 8.9833,
-            "diferenca_vs_esperanca_aleatoria": -0.0167,
-            "diferenca_media_vs_baseline_simulado": 0.05,
-            "ic95_diferenca_pareada": [
-              -0.2111,
-              0.2833
+          "recencia_reforcada": {
+            "media_acertos_por_jogo": 9.0315,
+            "media_melhor_jogo_por_concurso": 9.8667,
+            "concursos_com_algum_jogo_na_faixa_minima_pct": 25.0,
+            "media_jogos_na_faixa_minima_por_concurso": 0.3389,
+            "diferenca_pareada_media_acertos_vs_aleatorio": 0.1074,
+            "ic95_diferenca_media_acertos": [
+              -0.0574,
+              0.2667
             ],
-            "concursos_teste": 180,
-            "vitorias_sobre_baseline_simulado": 68,
-            "empates_com_baseline_simulado": 40,
-            "derrotas_para_baseline_simulado": 72
+            "diferenca_pareada_melhor_jogo_vs_aleatorio": -0.1444,
+            "ic95_diferenca_melhor_jogo": [
+              -0.3611,
+              0.0611
+            ],
+            "diferenca_pareada_media_vs_ecg_original": -0.0167,
+            "ic95_diferenca_vs_ecg_original": [
+              -0.0852,
+              0.05
+            ],
+            "vitorias_vs_ecg_original": 39,
+            "empates_vs_ecg_original": 97,
+            "derrotas_vs_ecg_original": 44,
+            "concursos_teste": 180
           },
-          "frequencia_30": {
-            "media_acertos": 9.0611,
-            "diferenca_vs_esperanca_aleatoria": 0.0611,
-            "diferenca_media_vs_baseline_simulado": 0.1278,
-            "ic95_diferenca_pareada": [
-              -0.1444,
-              0.4111
+          "equilibrio_estrutural": {
+            "media_acertos_por_jogo": 9.037,
+            "media_melhor_jogo_por_concurso": 9.9111,
+            "concursos_com_algum_jogo_na_faixa_minima_pct": 25.556,
+            "media_jogos_na_faixa_minima_por_concurso": 0.3611,
+            "diferenca_pareada_media_acertos_vs_aleatorio": 0.113,
+            "ic95_diferenca_media_acertos": [
+              -0.0556,
+              0.2815
             ],
-            "concursos_teste": 180,
-            "vitorias_sobre_baseline_simulado": 81,
-            "empates_com_baseline_simulado": 35,
-            "derrotas_para_baseline_simulado": 64
+            "diferenca_pareada_melhor_jogo_vs_aleatorio": -0.1,
+            "ic95_diferenca_melhor_jogo": [
+              -0.3167,
+              0.1056
+            ],
+            "diferenca_pareada_media_vs_ecg_original": -0.0111,
+            "ic95_diferenca_vs_ecg_original": [
+              -0.0556,
+              0.0333
+            ],
+            "vitorias_vs_ecg_original": 19,
+            "empates_vs_ecg_original": 138,
+            "derrotas_vs_ecg_original": 23,
+            "concursos_teste": 180
           },
-          "recencia_ponderada_30_100": {
-            "media_acertos": 9.0222,
-            "diferenca_vs_esperanca_aleatoria": 0.0222,
-            "diferenca_media_vs_baseline_simulado": 0.0889,
-            "ic95_diferenca_pareada": [
-              -0.1556,
-              0.3389
+          "diversificacao_portfolio": {
+            "media_acertos_por_jogo": 9.0796,
+            "media_melhor_jogo_por_concurso": 9.9833,
+            "concursos_com_algum_jogo_na_faixa_minima_pct": 27.222,
+            "media_jogos_na_faixa_minima_por_concurso": 0.3722,
+            "diferenca_pareada_media_acertos_vs_aleatorio": 0.1556,
+            "ic95_diferenca_media_acertos": [
+              -0.0037,
+              0.3185
             ],
-            "concursos_teste": 180,
-            "vitorias_sobre_baseline_simulado": 78,
-            "empates_com_baseline_simulado": 38,
-            "derrotas_para_baseline_simulado": 64
+            "diferenca_pareada_melhor_jogo_vs_aleatorio": -0.0278,
+            "ic95_diferenca_melhor_jogo": [
+              -0.2444,
+              0.1833
+            ],
+            "diferenca_pareada_media_vs_ecg_original": 0.0315,
+            "ic95_diferenca_vs_ecg_original": [
+              -0.0148,
+              0.0833
+            ],
+            "vitorias_vs_ecg_original": 31,
+            "empates_vs_ecg_original": 127,
+            "derrotas_vs_ecg_original": 22,
+            "concursos_teste": 180
+          },
+          "aleatorio_uniforme": {
+            "media_acertos_por_jogo": 8.9241,
+            "media_melhor_jogo_por_concurso": 10.0111,
+            "concursos_com_algum_jogo_na_faixa_minima_pct": 31.667,
+            "media_jogos_na_faixa_minima_por_concurso": 0.3444,
+            "diferenca_pareada_media_acertos_vs_aleatorio": 0.0,
+            "ic95_diferenca_media_acertos": [
+              0.0,
+              0.0
+            ],
+            "diferenca_pareada_melhor_jogo_vs_aleatorio": 0.0,
+            "ic95_diferenca_melhor_jogo": [
+              0.0,
+              0.0
+            ],
+            "diferenca_pareada_media_vs_ecg_original": 0.0,
+            "ic95_diferenca_vs_ecg_original": [
+              0.0,
+              0.0
+            ],
+            "vitorias_vs_ecg_original": 0,
+            "empates_vs_ecg_original": 180,
+            "derrotas_vs_ecg_original": 0,
+            "concursos_teste": 180
           }
         },
-        "melhor_media_observada": "frequencia_30",
+        "melhor_variante_vs_aleatorio": "diversificacao_portfolio",
+        "diferencas_variantes_vs_gerador_original": {
+          "recencia_reforcada": -0.0166,
+          "equilibrio_estrutural": -0.0111,
+          "diversificacao_portfolio": 0.0315
+        },
         "evidencia": "inconclusiva",
-        "decisao": "Não aplicar automaticamente. Exigir repetição em período futuro intocado e validação independente; sinal exploratório não prova vantagem futura.",
+        "decisao": "Nenhuma alteração automática. Uma variante só deve ser considerada após replicação em período futuro intocado, análise de múltiplas comparações e autorização explícita.",
+        "fidelidade": [
+          "O baseline reproduz o scoreProfile do app: pesos 35/20/15/10/10/10 para histórico completo, 30, 20, 15, 10 e 100 concursos.",
+          "Reproduz candidateScore da Lotofácil e da Mega-Sena, 100 candidatos, sorteio ponderado, remoção de duplicatas e seleção dos 3 maiores scores.",
+          "A sequência aleatória é reproduzível por semente; a distribuição do sorteio ponderado corresponde ao algoritmo do navegador, mas não é a mesma sequência de Math.random()."
+        ],
         "limitacoes": [
-          "Testa regras de seleção de dezenas, não reproduz integralmente os 100 candidatos e o score do aplicativo.",
-          "Empates de frequência favorecem menor número; regra determinística, não preditiva.",
-          "Quatro variantes foram comparadas; múltiplas comparações elevam risco de falso positivo.",
-          "Sorteios são independentes; resultados passados não alteram probabilidades futuras."
+          "O experimento testa o padrão de 3 jogos, que é o padrão inicial da interface; outros tamanhos de lote podem produzir métricas diferentes.",
+          "A janela de teste é a mais recente e serve como validação retrospectiva exploratória; deve haver um período futuro intocado para confirmação.",
+          "O limiar de faixa mínima é apenas referência de acertos (11+ Lotofácil; 4+ Mega-Sena), não cálculo de prêmio ou rentabilidade.",
+          "Sorteios são independentes; desempenho histórico não implica vantagem futura."
         ]
       },
       "contest": 3831,
@@ -478,76 +562,160 @@
       "label": "Mega-Sena",
       "experimentos_pesquisa": {
         "status": "concluido",
-        "desenho": "Walk-forward: 250 concursos anteriores para treino; regra congelada antes do concurso testado; um jogo por estratégia e concurso.",
+        "desenho": "Walk-forward por concurso: 250 concursos anteriores; 100 candidatos por lote; 3 jogos finais por estratégia; todos avaliados no mesmo resultado futuro. Parâmetros fixos antes do período de teste.",
         "concursos_teste": 180,
         "periodo_teste": [
           "28/08/2025",
           "15/11/2026"
         ],
-        "esperanca_acertos_jogo_aleatorio": 0.6,
-        "baseline_simulado": "Um jogo uniforme independente por concurso, com semente reprodutível.",
+        "limiar_faixa_minima": 4,
+        "jogos_por_concurso": 3,
+        "candidatos_por_estrategia": 100,
         "estrategias": {
-          "frequencia_250": {
-            "media_acertos": 0.5167,
-            "diferenca_vs_esperanca_aleatoria": -0.0833,
-            "diferenca_media_vs_baseline_simulado": -0.0444,
-            "ic95_diferenca_pareada": [
-              -0.1778,
-              0.0889
+          "ecg_original": {
+            "media_acertos_por_jogo": 0.5926,
+            "media_melhor_jogo_por_concurso": 1.0722,
+            "concursos_com_algum_jogo_na_faixa_minima_pct": 0,
+            "media_jogos_na_faixa_minima_por_concurso": 0,
+            "diferenca_pareada_media_acertos_vs_aleatorio": -0.0315,
+            "ic95_diferenca_media_acertos": [
+              -0.1241,
+              0.0611
             ],
-            "concursos_teste": 180,
-            "vitorias_sobre_baseline_simulado": 46,
-            "empates_com_baseline_simulado": 83,
-            "derrotas_para_baseline_simulado": 51
+            "diferenca_pareada_melhor_jogo_vs_aleatorio": -0.1833,
+            "ic95_diferenca_melhor_jogo": [
+              -0.3222,
+              -0.0444
+            ],
+            "diferenca_pareada_media_vs_ecg_original": 0.0,
+            "ic95_diferenca_vs_ecg_original": [
+              0.0,
+              0.0
+            ],
+            "vitorias_vs_ecg_original": 0,
+            "empates_vs_ecg_original": 180,
+            "derrotas_vs_ecg_original": 0,
+            "concursos_teste": 180
           },
-          "frequencia_100": {
-            "media_acertos": 0.5833,
-            "diferenca_vs_esperanca_aleatoria": -0.0167,
-            "diferenca_media_vs_baseline_simulado": 0.0222,
-            "ic95_diferenca_pareada": [
-              -0.1389,
-              0.1667
+          "recencia_reforcada": {
+            "media_acertos_por_jogo": 0.5833,
+            "media_melhor_jogo_por_concurso": 1.0722,
+            "concursos_com_algum_jogo_na_faixa_minima_pct": 0,
+            "media_jogos_na_faixa_minima_por_concurso": 0,
+            "diferenca_pareada_media_acertos_vs_aleatorio": -0.0407,
+            "ic95_diferenca_media_acertos": [
+              -0.137,
+              0.0481
             ],
-            "concursos_teste": 180,
-            "vitorias_sobre_baseline_simulado": 51,
-            "empates_com_baseline_simulado": 79,
-            "derrotas_para_baseline_simulado": 50
+            "diferenca_pareada_melhor_jogo_vs_aleatorio": -0.1833,
+            "ic95_diferenca_melhor_jogo": [
+              -0.3333,
+              -0.0333
+            ],
+            "diferenca_pareada_media_vs_ecg_original": -0.0093,
+            "ic95_diferenca_vs_ecg_original": [
+              -0.0481,
+              0.0315
+            ],
+            "vitorias_vs_ecg_original": 37,
+            "empates_vs_ecg_original": 105,
+            "derrotas_vs_ecg_original": 38,
+            "concursos_teste": 180
           },
-          "frequencia_30": {
-            "media_acertos": 0.5389,
-            "diferenca_vs_esperanca_aleatoria": -0.0611,
-            "diferenca_media_vs_baseline_simulado": -0.0222,
-            "ic95_diferenca_pareada": [
-              -0.1667,
-              0.1222
+          "equilibrio_estrutural": {
+            "media_acertos_por_jogo": 0.587,
+            "media_melhor_jogo_por_concurso": 1.0556,
+            "concursos_com_algum_jogo_na_faixa_minima_pct": 0,
+            "media_jogos_na_faixa_minima_por_concurso": 0,
+            "diferenca_pareada_media_acertos_vs_aleatorio": -0.037,
+            "ic95_diferenca_media_acertos": [
+              -0.1296,
+              0.0593
             ],
-            "concursos_teste": 180,
-            "vitorias_sobre_baseline_simulado": 53,
-            "empates_com_baseline_simulado": 73,
-            "derrotas_para_baseline_simulado": 54
+            "diferenca_pareada_melhor_jogo_vs_aleatorio": -0.2,
+            "ic95_diferenca_melhor_jogo": [
+              -0.3444,
+              -0.0611
+            ],
+            "diferenca_pareada_media_vs_ecg_original": -0.0056,
+            "ic95_diferenca_vs_ecg_original": [
+              -0.0204,
+              0.0074
+            ],
+            "vitorias_vs_ecg_original": 5,
+            "empates_vs_ecg_original": 168,
+            "derrotas_vs_ecg_original": 7,
+            "concursos_teste": 180
           },
-          "recencia_ponderada_30_100": {
-            "media_acertos": 0.5667,
-            "diferenca_vs_esperanca_aleatoria": -0.0333,
-            "diferenca_media_vs_baseline_simulado": 0.0056,
-            "ic95_diferenca_pareada": [
-              -0.1333,
-              0.1444
+          "diversificacao_portfolio": {
+            "media_acertos_por_jogo": 0.5926,
+            "media_melhor_jogo_por_concurso": 1.0778,
+            "concursos_com_algum_jogo_na_faixa_minima_pct": 0,
+            "media_jogos_na_faixa_minima_por_concurso": 0,
+            "diferenca_pareada_media_acertos_vs_aleatorio": -0.0315,
+            "ic95_diferenca_media_acertos": [
+              -0.1185,
+              0.0574
             ],
-            "concursos_teste": 180,
-            "vitorias_sobre_baseline_simulado": 48,
-            "empates_com_baseline_simulado": 84,
-            "derrotas_para_baseline_simulado": 48
+            "diferenca_pareada_melhor_jogo_vs_aleatorio": -0.1778,
+            "ic95_diferenca_melhor_jogo": [
+              -0.3111,
+              -0.0389
+            ],
+            "diferenca_pareada_media_vs_ecg_original": -0.0,
+            "ic95_diferenca_vs_ecg_original": [
+              -0.0204,
+              0.0204
+            ],
+            "vitorias_vs_ecg_original": 9,
+            "empates_vs_ecg_original": 162,
+            "derrotas_vs_ecg_original": 9,
+            "concursos_teste": 180
+          },
+          "aleatorio_uniforme": {
+            "media_acertos_por_jogo": 0.6241,
+            "media_melhor_jogo_por_concurso": 1.2556,
+            "concursos_com_algum_jogo_na_faixa_minima_pct": 0,
+            "media_jogos_na_faixa_minima_por_concurso": 0,
+            "diferenca_pareada_media_acertos_vs_aleatorio": 0.0,
+            "ic95_diferenca_media_acertos": [
+              0.0,
+              0.0
+            ],
+            "diferenca_pareada_melhor_jogo_vs_aleatorio": 0.0,
+            "ic95_diferenca_melhor_jogo": [
+              0.0,
+              0.0
+            ],
+            "diferenca_pareada_media_vs_ecg_original": 0.0,
+            "ic95_diferenca_vs_ecg_original": [
+              0.0,
+              0.0
+            ],
+            "vitorias_vs_ecg_original": 0,
+            "empates_vs_ecg_original": 180,
+            "derrotas_vs_ecg_original": 0,
+            "concursos_teste": 180
           }
         },
-        "melhor_media_observada": "frequencia_100",
+        "melhor_variante_vs_aleatorio": "ecg_original",
+        "diferencas_variantes_vs_gerador_original": {
+          "recencia_reforcada": -0.0093,
+          "equilibrio_estrutural": -0.0056,
+          "diversificacao_portfolio": 0.0
+        },
         "evidencia": "inconclusiva",
-        "decisao": "Não aplicar automaticamente. Exigir repetição em período futuro intocado e validação independente; sinal exploratório não prova vantagem futura.",
+        "decisao": "Nenhuma alteração automática. Uma variante só deve ser considerada após replicação em período futuro intocado, análise de múltiplas comparações e autorização explícita.",
+        "fidelidade": [
+          "O baseline reproduz o scoreProfile do app: pesos 35/20/15/10/10/10 para histórico completo, 30, 20, 15, 10 e 100 concursos.",
+          "Reproduz candidateScore da Lotofácil e da Mega-Sena, 100 candidatos, sorteio ponderado, remoção de duplicatas e seleção dos 3 maiores scores.",
+          "A sequência aleatória é reproduzível por semente; a distribuição do sorteio ponderado corresponde ao algoritmo do navegador, mas não é a mesma sequência de Math.random()."
+        ],
         "limitacoes": [
-          "Testa regras de seleção de dezenas, não reproduz integralmente os 100 candidatos e o score do aplicativo.",
-          "Empates de frequência favorecem menor número; regra determinística, não preditiva.",
-          "Quatro variantes foram comparadas; múltiplas comparações elevam risco de falso positivo.",
-          "Sorteios são independentes; resultados passados não alteram probabilidades futuras."
+          "O experimento testa o padrão de 3 jogos, que é o padrão inicial da interface; outros tamanhos de lote podem produzir métricas diferentes.",
+          "A janela de teste é a mais recente e serve como validação retrospectiva exploratória; deve haver um período futuro intocado para confirmação.",
+          "O limiar de faixa mínima é apenas referência de acertos (11+ Lotofácil; 4+ Mega-Sena), não cálculo de prêmio ou rentabilidade.",
+          "Sorteios são independentes; desempenho histórico não implica vantagem futura."
         ]
       },
       "contest": 3086,
