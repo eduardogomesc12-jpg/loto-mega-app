@@ -13,7 +13,7 @@ permissions:
   contents: write
 concurrency:
   group: ecg-report-publication
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   analyze:
     runs-on: ubuntu-latest
