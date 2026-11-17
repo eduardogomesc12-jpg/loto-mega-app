@@ -1,7 +1,7 @@
 name: ECG - Inteligência Estatística com IA
 on:
   schedule:
-    - cron: '0 21 * * *'
+    - cron: "0 21 * * *"
   workflow_dispatch:
 permissions:
   contents: write
@@ -15,16 +15,22 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: \${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Baixar branch main
         uses: actions/checkout@v4
         with:
           ref: main
-      - name: Gerar relatório com OpenAI Responses API
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validar sintaxe da integração
+        run: node --check scripts/generate-ai-report.mjs
+      - name: Gerar relatório com IA protegida
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
+          OPENAI_API_KEY: \${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: \${{ vars.OPENAI_MODEL }}
         run: node scripts/generate-ai-report.mjs
       - name: Publicar relatório JSON na branch main
         run: |
