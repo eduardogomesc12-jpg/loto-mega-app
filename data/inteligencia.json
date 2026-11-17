@@ -1,0 +1,22 @@
+{
+  "schema_version": 2,
+  "gerado_em": "2026-11-17T16:24:18.955Z",
+  "fonte_dados": "Feed histórico público com conferência do último concurso e preenchimento incremental via endpoint público do Portal Loterias CAIXA.",
+  "status_ia": "aguardando_configuracao",
+  "modelo": "gpt-4.1-mini",
+  "metadados": {
+    "lotofacil": {
+      "ultimo_concurso": 3831,
+      "data_ultimo": "16/11/2026",
+      "concursos_analisados": 3831
+    },
+    "megasena": {
+      "ultimo_concurso": 3086,
+      "data_ultimo": "15/11/2026",
+      "concursos_analisados": 3086
+    }
+  },
+  "modalidades": null,
+  "aviso": "Frequências e atrasos são descritivos e não aumentam a probabilidade matemática de ganhar.",
+  "aviso_ia": "Configure OPENAI_API_KEY em Settings > Secrets and variables > Actions para ativar a análise generativa. Nunca insira a chave no código ou no navegador."
+}
