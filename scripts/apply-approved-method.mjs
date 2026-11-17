@@ -36,7 +36,7 @@ if (action === "restore") {
   await fs.copyFile(methodPath, path.join(backupDir, method.version_id + "-before-restore-" + now + ".json"));
   const previous = method.version_id;
   restored.parent_version = previous;
-  restored.version_id = "restore-" + versionArg + "-" + now;
+  restored.version_id = versionArg;
   restored.updated_at = new Date().toISOString();
   restored.status = "restaurado_com_autorizacao";
   await fs.writeFile(methodPath, JSON.stringify(restored, null, 2) + "\n");
