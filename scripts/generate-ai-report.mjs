@@ -67,34 +67,26 @@ function analyzeGame(game, label) {
 
   const experiment = cfg.experimentos_pesquisa || { status: "nao_executado" };
   if (experiment.status === "concluido") {
-    const leaderName = experiment.melhor_variante_vs_aleatorio;
-    const leader = experiment.estrategias?.[leaderName];
-    const original = experiment.estrategias?.ecg_original;
-    const comparisons = Object.entries(experiment.estrategias || {}).map(([name, metrics]) =>
-      name + ": média " + metrics.media_acertos_por_jogo + " acertos/jogo; melhor jogo " +
-      metrics.media_melhor_jogo_por_concurso + "; concursos com faixa mínima " +
-      metrics.concursos_com_algum_jogo_na_faixa_minima_pct + "%."
+    const comparisons = experiment.comparacao_pareada_vs_original || {};
+    const reproducible = experiment.variantes_com_evidencia_reproduzivel || [];
+    const lines = Object.entries(comparisons).map(([name, m]) =>
+      name + ": diferença média vs original " + m.diferenca_media_vs_ecg_original +
+      "; descoberta " + m.descoberta_diferenca_media +
+      "; confirmação intocada " + m.confirmacao_diferenca_media +
+      "; IC confirmação [" + (m.ic98_33_bootstrap_blocos_confirmacao || []).join(", ") +
+      "]; sementes positivas " + m.sementes_com_diferenca_positiva + "/5."
     ).join(" ");
-    const deltas = Object.entries(experiment.estrategias || {})
-      .filter(([name]) => name !== "ecg_original" && name !== "aleatorio_uniforme")
-      .map(([name, metrics]) => name + " vs ECG original: " +
-        (metrics.diferenca_pareada_media_vs_ecg_original > 0 ? "+" : "") +
-        metrics.diferenca_pareada_media_vs_ecg_original + " acertos/jogo; IC95% [" +
-        (metrics.ic95_diferenca_vs_ecg_original || []).join(", ") + "].")
-      .join(" ");
     recommendations.push(recommendation(
-      "Comparação completa do gerador ECG com variantes",
-      experiment.evidencia === "sinal_positivo_exploratorio" ? "Investigar" : "Manter método atual",
-      "Avaliar se alterações de recência, equilíbrio estrutural ou diversificação de portfólio melhoram o desempenho fora da amostra.",
-      "Foram avaliados " + experiment.concursos_teste + " concursos, com " + experiment.jogos_por_concurso +
-      " jogos por estratégia e 100 candidatos por lote. Melhor variante vs aleatório: " + leaderName +
-      " (" + (leader?.media_acertos_por_jogo ?? "n/d") + " acertos/jogo). ECG original: " +
-      (original?.media_acertos_por_jogo ?? "n/d") + " acertos/jogo. " + deltas,
-      comparisons + " Diferença da melhor variante vs aleatório: " +
-      (leader?.diferenca_pareada_media_acertos_vs_aleatorio ?? "n/d") +
-      "; IC95% [" + (leader?.ic95_diferenca_media_acertos || []).join(", ") + "]. Evidência: " + experiment.evidencia + ".",
+      "Pesquisa robusta: replicação independente do gerador",
+      reproducible.length ? "Candidata; exige revisão humana" : "Manter método atual",
+      "Verificar se variantes completas superam o ECG original em descoberta e em um bloco cronológico de confirmação não usado para ajuste.",
+      "Protocolo " + (experiment.protocolo || "anterior") + "; " + experiment.concursos_teste +
+      " concursos; " + (experiment.concursos_descoberta || "n/d") + " de descoberta e " +
+      (experiment.concursos_confirmacao_intocada || "n/d") + " de confirmação. Variantes que passaram: " +
+      (reproducible.join(", ") || "nenhuma") + ". " + lines,
+      "Comparação pareada por concurso, cinco sementes fixas por método, bootstrap em blocos móveis e IC de 98,33% na confirmação para três variantes.",
       (experiment.limitacoes || []).join(" "),
-      "Replicar as variantes em um período futuro intocado, avaliar intervalos pareados contra o ECG original e corrigir múltiplas comparações. Nenhuma mudança será aplicada sem autorização."
+      experiment.regra_promocao || "Exigir nova replicação prospectiva em concursos futuros, sem reajustar parâmetros, e autorização explícita. Nenhuma mudança é aplicada automaticamente."
     ));
   } else {
     recommendations.push(recommendation(
