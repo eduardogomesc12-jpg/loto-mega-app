@@ -204,89 +204,171 @@ def _portfolio_metrics(portfolio, actual, prize_threshold):
             "jogos_com_faixa_minima": sum(value >= prize_threshold for value in hits),
             "algum_jogo_com_faixa_minima": int(any(value >= prize_threshold for value in hits))}
 
-def research_experiments(draws, cfg, game):
-    """Compara o gerador real reproduzido e variantes completas em walk-forward."""
+def _block_bootstrap_ci(values, seed, confidence=0.95, block_size=10, rounds=3000):
+    """IC por bootstrap de blocos móveis para reduzir a falsa precisão temporal."""
     import random
-    max_tests = min(180, max(0, len(draws) - 250))
-    if max_tests < 40:
-        return {"status": "amostra_insuficiente", "concursos_teste": max_tests,
-                "nota": "São necessários ao menos 40 concursos de teste após 250 concursos de treinamento."}
+    if not values: return [None, None]
+    rng = random.Random(seed)
+    n = len(values)
+    block_size = max(1, min(block_size, n))
+    means = []
+    blocks_needed = math.ceil(n / block_size)
+    for _ in range(rounds):
+        sample = []
+        for _ in range(blocks_needed):
+            start = rng.randrange(max(1, n - block_size + 1))
+            sample.extend(values[start:start + block_size])
+        means.append(statistics.mean(sample[:n]))
+    means.sort()
+    alpha = (1 - confidence) / 2
+    low = means[max(0, int(alpha * rounds))]
+    high = means[min(rounds - 1, int((1 - alpha) * rounds))]
+    return [round(low, 4), round(high, 4)]
+
+
+def research_experiments(draws, cfg, game):
+    """Backtest multi-seed, temporalmente separado e com confirmação final intocada."""
     variants = ["ecg_original", "recencia_reforcada", "equilibrio_estrutural", "diversificacao_portfolio"]
-    records = {name: [] for name in variants + ["aleatorio_uniforme"]}
+    seed_ids = [11, 23, 37, 53, 71]
+    max_tests = min(180, max(0, len(draws) - 250))
+    if max_tests < 120:
+        return {"status": "amostra_insuficiente", "concursos_teste": max_tests,
+                "nota": "São necessários 250 concursos de treino e ao menos 120 testes para separar descoberta e confirmação."}
+
     first = len(draws) - max_tests
+    split = max(60, int(max_tests * 2 / 3))
+    split = min(split, max_tests - 60)
+    discovery_indices = list(range(first, first + split))
+    confirmation_indices = list(range(first + split, len(draws)))
     prize_threshold = 11 if game == "lotofacil" else 4
+    # Uma média por concurso, agregada sobre as mesmas cinco sementes para cada método.
+    records = {name: [] for name in variants + ["aleatorio_uniforme"]}
+    seed_records = {name: {seed: [] for seed in seed_ids} for name in variants}
     for idx in range(first, len(draws)):
         history = list(reversed(draws[:idx]))
         actual = set(draws[idx]["dezenas"])
         contest = draws[idx]["concurso"]
         if len(history) < 250: continue
         for name in variants:
-            portfolio = _generate_portfolio(history, cfg, name, contest * 1009 + cfg["max"], 3)
-            records[name].append(_portfolio_metrics(portfolio, actual, prize_threshold))
-        random_portfolio = _random_portfolio(cfg, contest * 1009 + cfg["max"] + 7919, 3)
-        records["aleatorio_uniforme"].append(_portfolio_metrics(random_portfolio, actual, prize_threshold))
-    baseline = records["aleatorio_uniforme"]
+            per_seed = []
+            for seed_id in seed_ids:
+                seed = contest * 1009 + cfg["max"] * 17 + seed_id * 7919
+                portfolio = _generate_portfolio(history, cfg, name, seed, 3)
+                metric = _portfolio_metrics(portfolio, actual, prize_threshold)
+                per_seed.append(metric)
+                seed_records[name][seed_id].append(metric["media_acertos"])
+            records[name].append({
+                "media_acertos": statistics.mean(x["media_acertos"] for x in per_seed),
+                "melhor_acerto": statistics.mean(x["melhor_acerto"] for x in per_seed),
+                "jogos_na_faixa": statistics.mean(x["jogos_com_faixa_minima"] for x in per_seed),
+                "algum_faixa": statistics.mean(x["algum_jogo_com_faixa_minima"] for x in per_seed)
+            })
+        random_metrics = []
+        for seed_id in seed_ids:
+            random_seed = contest * 1009 + cfg["max"] * 17 + seed_id * 104729 + 7919
+            random_metrics.append(_portfolio_metrics(_random_portfolio(cfg, random_seed, 3), actual, prize_threshold))
+        records["aleatorio_uniforme"].append({
+            "media_acertos": statistics.mean(x["media_acertos"] for x in random_metrics),
+            "melhor_acerto": statistics.mean(x["melhor_acerto"] for x in random_metrics),
+            "jogos_na_faixa": statistics.mean(x["jogos_com_faixa_minima"] for x in random_metrics),
+            "algum_faixa": statistics.mean(x["algum_jogo_com_faixa_minima"] for x in random_metrics)
+        })
+
+    if len(records["ecg_original"]) != max_tests:
+        return {"status": "erro_amostra", "concursos_teste": len(records["ecg_original"]),
+                "nota": "Quantidade efetiva de concursos difere da janela planejada."}
+
+    def summarize(values):
+        return round(statistics.mean(values), 4) if values else None
+
     summary = {}
     for name in variants + ["aleatorio_uniforme"]:
         rows = records[name]
-        mean_hits = [row["media_acertos"] for row in rows]
-        best_hits = [row["melhor_acerto"] for row in rows]
-        threshold_rates = [row["algum_jogo_com_faixa_minima"] for row in rows]
-        paired_mean = [rows[i]["media_acertos"] - baseline[i]["media_acertos"] for i in range(len(rows))] if name != "aleatorio_uniforme" else [0.0] * len(rows)
-        paired_best = [rows[i]["melhor_acerto"] - baseline[i]["melhor_acerto"] for i in range(len(rows))] if name != "aleatorio_uniforme" else [0.0] * len(rows)
-        original_rows = records["ecg_original"]
-        paired_original = [rows[i]["media_acertos"] - original_rows[i]["media_acertos"] for i in range(len(rows))] if name not in ("ecg_original", "aleatorio_uniforme") else [0.0] * len(rows)
         summary[name] = {
-            "media_acertos_por_jogo": round(statistics.mean(mean_hits), 4),
-            "media_melhor_jogo_por_concurso": round(statistics.mean(best_hits), 4),
-            "concursos_com_algum_jogo_na_faixa_minima_pct": round(statistics.mean(threshold_rates) * 100, 3),
-            "media_jogos_na_faixa_minima_por_concurso": round(statistics.mean(row["jogos_com_faixa_minima"] for row in rows), 4),
-            "diferenca_pareada_media_acertos_vs_aleatorio": round(statistics.mean(paired_mean), 4),
-            "ic95_diferenca_media_acertos": _bootstrap_ci(paired_mean, sum(map(ord, name)) + len(draws)),
-            "diferenca_pareada_melhor_jogo_vs_aleatorio": round(statistics.mean(paired_best), 4),
-            "ic95_diferenca_melhor_jogo": _bootstrap_ci(paired_best, sum(map(ord, name)) + len(draws) + 31),
-            "diferenca_pareada_media_vs_ecg_original": round(statistics.mean(paired_original), 4),
-            "ic95_diferenca_vs_ecg_original": _bootstrap_ci(paired_original, sum(map(ord, name)) + len(draws) + 67),
-            "vitorias_vs_ecg_original": sum(value > 0 for value in paired_original),
-            "empates_vs_ecg_original": sum(value == 0 for value in paired_original),
-            "derrotas_vs_ecg_original": sum(value < 0 for value in paired_original),
+            "media_acertos_por_jogo": summarize([x["media_acertos"] for x in rows]),
+            "media_melhor_jogo_por_concurso": summarize([x["melhor_acerto"] for x in rows]),
+            "pct_concursos_com_algum_jogo_faixa_minima": round(statistics.mean(x["algum_faixa"] for x in rows) * 100, 3),
+            "media_jogos_faixa_minima_por_concurso": summarize([x["jogos_na_faixa"] for x in rows]),
             "concursos_teste": len(rows)
         }
-    deltas = {name: summary[name]["diferenca_pareada_media_acertos_vs_aleatorio"] for name in variants}
-    leader = max(variants, key=lambda name: deltas[name])
-    ci = summary[leader]["ic95_diferenca_media_acertos"]
-    if ci[0] is not None and ci[0] > 0:
-        evidence = "sinal_positivo_exploratorio"
-    elif ci[1] is not None and ci[1] < 0:
-        evidence = "desempenho_inferior_ao_aleatorio"
-    else:
-        evidence = "inconclusiva"
+
+    comparisons = {}
+    for name in variants:
+        all_delta = [records[name][i]["media_acertos"] - records["ecg_original"][i]["media_acertos"] for i in range(max_tests)]
+        discovery_delta = [all_delta[i] for i in range(split)]
+        confirmation_delta = [all_delta[i] for i in range(split, max_tests)]
+        seed_deltas = []
+        for seed_id in seed_ids:
+            candidate = seed_records[name][seed_id]
+            original = seed_records["ecg_original"][seed_id]
+            seed_deltas.append(statistics.mean(candidate[i] - original[i] for i in range(max_tests)))
+        # Bonferroni: três variantes candidatas comparadas ao ECG original.
+        comparisons[name] = {
+            "diferenca_media_vs_ecg_original": summarize(all_delta),
+            "ic95_bootstrap_blocos_vs_original": _block_bootstrap_ci(all_delta, sum(map(ord, name)) + len(draws)),
+            "descoberta_diferenca_media": summarize(discovery_delta),
+            "confirmacao_diferenca_media": summarize(confirmation_delta),
+            "ic98_33_bootstrap_blocos_confirmacao": _block_bootstrap_ci(confirmation_delta, sum(map(ord, name)) + len(draws) + 101, confidence=0.9833333333),
+            "sementes_com_diferenca_positiva": sum(x > 0 for x in seed_deltas),
+            "diferencas_por_semente": [round(x, 4) for x in seed_deltas],
+            "vitorias": sum(x > 0 for x in all_delta),
+            "empates": sum(x == 0 for x in all_delta),
+            "derrotas": sum(x < 0 for x in all_delta)
+        }
+
+    # Desempenho contra aleatório, com IC por blocos e cinco réplicas do baseline.
+    random_comparison = {}
+    for name in variants:
+        delta = [records[name][i]["media_acertos"] - records["aleatorio_uniforme"][i]["media_acertos"] for i in range(max_tests)]
+        random_comparison[name] = {
+            "diferenca_media_vs_aleatorio": summarize(delta),
+            "ic95_bootstrap_blocos": _block_bootstrap_ci(delta, sum(map(ord, name)) + len(draws) + 211)
+        }
+
+    reproducible = {}
+    for name in variants[1:]:
+        c = comparisons[name]
+        ci = c["ic98_33_bootstrap_blocos_confirmacao"]
+        reproducible[name] = bool(
+            c["descoberta_diferenca_media"] is not None and c["descoberta_diferenca_media"] > 0
+            and c["confirmacao_diferenca_media"] is not None and c["confirmacao_diferenca_media"] > 0
+            and ci[0] is not None and ci[0] > 0
+            and c["sementes_com_diferenca_positiva"] >= 4
+        )
+    winners = [name for name, passed in reproducible.items() if passed]
+    decision = ("candidata_a_aprovacao_humana" if winners else
+                "manter_gerador_original_sem_evidencia_reproduzivel")
     return {
         "status": "concluido",
-        "desenho": "Walk-forward por concurso: todo o histórico anterior disponível; 100 candidatos por lote; 3 jogos finais por estratégia; todos avaliados no mesmo resultado futuro. Parâmetros fixos antes do período de teste.",
-        "concursos_teste": len(baseline),
+        "protocolo": "ECG-ROBUST-1",
+        "desenho": "Walk-forward com 250+ concursos anteriores por previsão; cinco sementes fixas por estratégia; 100 candidatos e três jogos finais; descoberta cronológica seguida de bloco final de confirmação intocado; bootstrap de blocos móveis de 10 concursos; IC de 98,33% na confirmação para controlar três comparações (Bonferroni).",
+        "concursos_teste": max_tests,
+        "concursos_descoberta": split,
+        "concursos_confirmacao_intocada": max_tests - split,
         "periodo_teste": [draws[first]["data"], draws[-1]["data"]],
-        "limiar_faixa_minima": prize_threshold,
+        "periodo_confirmacao": [draws[first + split]["data"], draws[-1]["data"]],
+        "sementes_independentes": seed_ids,
         "jogos_por_concurso": 3,
         "candidatos_por_estrategia": 100,
+        "limiar_faixa_minima": prize_threshold,
         "estrategias": summary,
-        "melhor_variante_vs_aleatorio": leader,
-        "diferencas_variantes_vs_gerador_original": {
-            name: round(summary[name]["media_acertos_por_jogo"] - summary["ecg_original"]["media_acertos_por_jogo"], 4)
-            for name in variants if name != "ecg_original"
-        },
-        "evidencia": evidence,
-        "decisao": "Nenhuma alteração automática. Uma variante só deve ser considerada após replicação em período futuro intocado, análise de múltiplas comparações e autorização explícita.",
+        "comparacao_pareada_vs_original": comparisons,
+        "comparacao_vs_aleatorio": random_comparison,
+        "variantes_com_evidencia_reproduzivel": winners,
+        "status_reprodutibilidade": reproducible,
+        "decisao": decision,
+        "regra_promocao": "Exige diferença positiva na descoberta e confirmação, limite inferior do IC 98,33% por blocos acima de zero na confirmação e resultado positivo em pelo menos quatro das cinco sementes. Ainda requer replicação prospectiva e autorização humana.",
         "fidelidade": [
-            "O baseline reproduz o scoreProfile do app: pesos 35/20/15/10/10/10 para histórico completo, 30, 20, 15, 10 e 100 concursos.",
-            "Reproduz candidateScore da Lotofácil e da Mega-Sena, 100 candidatos, sorteio ponderado, remoção de duplicatas e seleção dos 3 maiores scores.",
-            "A sequência aleatória é reproduzível por semente; a distribuição do sorteio ponderado corresponde ao algoritmo do navegador, mas não é a mesma sequência de Math.random()."
+            "O baseline preserva os pesos 35/20/15/10/10/10, peso estrutural 0,30, score, 100 candidatos e seleção dos três maiores scores conforme a implementação reproduzida do app.",
+            "As variantes alteram somente parâmetros explicitados e são avaliadas nos mesmos concursos e sementes pareadas.",
+            "O gerador de produção não é alterado por este experimento; sementes reproduzem o motor de pesquisa, não a sequência Math.random() do navegador."
         ],
         "limitacoes": [
-            "O experimento testa o padrão de 3 jogos, que é o padrão inicial da interface; outros tamanhos de lote podem produzir métricas diferentes.",
-            "A janela de teste é a mais recente e serve como validação retrospectiva exploratória; deve haver um período futuro intocado para confirmação.",
-            "O limiar de faixa mínima é apenas referência de acertos (11+ Lotofácil; 4+ Mega-Sena), não cálculo de prêmio ou rentabilidade.",
-            "Sorteios são independentes; desempenho histórico não implica vantagem futura."
+            "O bloco de confirmação é retrospectivo e só fica verdadeiramente prospectivo quando concursos futuros forem adicionados sem reajuste de parâmetros.",
+            "Bootstrap em blocos reduz dependência local, mas não torna sorteios ou janelas temporalmente independentes.",
+            "Cinco sementes medem sensibilidade à aleatoriedade do gerador, não constituem cinco amostras independentes de sorteios.",
+            "Múltiplas variantes e métricas ainda podem gerar descobertas ocasionais; só a métrica primária (média de acertos por jogo) determina a regra de promoção.",
+            "Frequência e estrutura histórica não alteram a probabilidade matemática de uma combinação em sorteios independentes."
         ]
     }
 
