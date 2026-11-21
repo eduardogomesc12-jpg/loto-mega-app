@@ -1,25 +1,25 @@
 {
   "schema_version": 3,
-  "gerado_em": "2026-11-20T21:59:15.542Z",
+  "gerado_em": "2026-11-21T21:53:32.020Z",
   "fonte_dados": "Feed histórico público com conferência do último concurso e preenchimento incremental via endpoint público do Portal Loterias CAIXA.",
   "status_ia": "gerado_localmente",
   "modelo": "ECG Laboratório Estatístico Local v3",
   "metadados": {
     "lotofacil": {
-      "ultimo_concurso": 3833,
-      "data_ultimo": "18/11/2026",
-      "concursos_analisados": 3833
+      "ultimo_concurso": 3834,
+      "data_ultimo": "19/11/2026",
+      "concursos_analisados": 3834
     },
     "megasena": {
-      "ultimo_concurso": 3087,
-      "data_ultimo": "17/11/2026",
-      "concursos_analisados": 3087
+      "ultimo_concurso": 3088,
+      "data_ultimo": "19/11/2026",
+      "concursos_analisados": 3088
     }
   },
   "modalidades": {
     "lotofacil": {
-      "resumo": "Lotofácil: laboratório estatístico local em 3833 concursos. Experimentos independentes e temporais são exploratórios; não preveem sorteios.",
-      "concursos_analisados": 3833,
+      "resumo": "Lotofácil: laboratório estatístico local em 3834 concursos. Experimentos independentes e temporais são exploratórios; não preveem sorteios.",
+      "concursos_analisados": 3834,
       "fonte": "https://servicebus2.caixa.gov.br/portaldeloterias/api/lotofacil",
       "experimentos": {
         "status": "concluido",
@@ -29,12 +29,12 @@
         "concursos_descoberta": 120,
         "concursos_confirmacao_intocada": 60,
         "periodo_teste": [
-          "06/04/2026",
-          "18/11/2026"
+          "07/04/2026",
+          "19/11/2026"
         ],
         "periodo_confirmacao": [
-          "28/08/2026",
-          "18/11/2026"
+          "30/08/2026",
+          "19/11/2026"
         ],
         "sementes_independentes": [
           11,
@@ -48,36 +48,36 @@
         "limiar_faixa_minima": 11,
         "estrategias": {
           "ecg_original": {
-            "media_acertos_por_jogo": 9.0278,
-            "media_melhor_jogo_por_concurso": 9.9067,
-            "pct_concursos_com_algum_jogo_faixa_minima": 29.222,
-            "media_jogos_faixa_minima_por_concurso": 0.3567,
+            "media_acertos_por_jogo": 9.0315,
+            "media_melhor_jogo_por_concurso": 9.91,
+            "pct_concursos_com_algum_jogo_faixa_minima": 29.333,
+            "media_jogos_faixa_minima_por_concurso": 0.3578,
             "concursos_teste": 180
           },
           "recencia_reforcada": {
-            "media_acertos_por_jogo": 9.0263,
-            "media_melhor_jogo_por_concurso": 9.8867,
-            "pct_concursos_com_algum_jogo_faixa_minima": 27.778,
-            "media_jogos_faixa_minima_por_concurso": 0.3411,
+            "media_acertos_por_jogo": 9.0281,
+            "media_melhor_jogo_por_concurso": 9.89,
+            "pct_concursos_com_algum_jogo_faixa_minima": 27.889,
+            "media_jogos_faixa_minima_por_concurso": 0.3422,
             "concursos_teste": 180
           },
           "equilibrio_estrutural": {
             "media_acertos_por_jogo": 9.0233,
             "media_melhor_jogo_por_concurso": 9.8722,
-            "pct_concursos_com_algum_jogo_faixa_minima": 27.889,
-            "media_jogos_faixa_minima_por_concurso": 0.3456,
+            "pct_concursos_com_algum_jogo_faixa_minima": 28,
+            "media_jogos_faixa_minima_por_concurso": 0.3467,
             "concursos_teste": 180
           },
           "diversificacao_portfolio": {
-            "media_acertos_por_jogo": 9.0178,
+            "media_acertos_por_jogo": 9.0211,
             "media_melhor_jogo_por_concurso": 9.9178,
-            "pct_concursos_com_algum_jogo_faixa_minima": 28.556,
-            "media_jogos_faixa_minima_por_concurso": 0.3389,
+            "pct_concursos_com_algum_jogo_faixa_minima": 28.667,
+            "media_jogos_faixa_minima_por_concurso": 0.34,
             "concursos_teste": 180
           },
           "aleatorio_uniforme": {
-            "media_acertos_por_jogo": 8.9981,
-            "media_melhor_jogo_por_concurso": 10.0389,
+            "media_acertos_por_jogo": 9.0007,
+            "media_melhor_jogo_por_concurso": 10.04,
             "pct_concursos_com_algum_jogo_faixa_minima": 29.333,
             "media_jogos_faixa_minima_por_concurso": 0.34,
             "concursos_teste": 180
@@ -109,72 +109,72 @@
             "derrotas": 0
           },
           "recencia_reforcada": {
-            "diferenca_media_vs_ecg_original": -0.0015,
+            "diferenca_media_vs_ecg_original": -0.0033,
             "ic95_bootstrap_blocos_vs_original": [
-              -0.0289,
-              0.0222
+              -0.0278,
+              0.0215
             ],
-            "descoberta_diferenca_media": 0.0122,
-            "confirmacao_diferenca_media": -0.0289,
+            "descoberta_diferenca_media": 0.0067,
+            "confirmacao_diferenca_media": -0.0233,
             "ic98_33_bootstrap_blocos_confirmacao": [
               -0.0789,
               0.0267
             ],
-            "sementes_com_diferenca_positiva": 3,
+            "sementes_com_diferenca_positiva": 4,
             "diferencas_por_semente": [
-              0.0352,
-              0.0148,
+              0.0241,
+              0.013,
               0.0074,
-              -0.0611,
-              -0.0037
+              -0.0648,
+              0.0037
             ],
             "vitorias": 76,
             "empates": 26,
             "derrotas": 78
           },
           "equilibrio_estrutural": {
-            "diferenca_media_vs_ecg_original": -0.0044,
+            "diferenca_media_vs_ecg_original": -0.0081,
             "ic95_bootstrap_blocos_vs_original": [
-              -0.0222,
-              0.0137
+              -0.0226,
+              0.0133
             ],
-            "descoberta_diferenca_media": -0.0011,
+            "descoberta_diferenca_media": -0.0067,
             "confirmacao_diferenca_media": -0.0111,
             "ic98_33_bootstrap_blocos_confirmacao": [
-              -0.04,
-              0.02
+              -0.0378,
+              0.0211
             ],
             "sementes_com_diferenca_positiva": 2,
             "diferencas_por_semente": [
-              0.0093,
-              -0.0407,
+              0.0019,
+              -0.0444,
               0.0185,
               -0.0074,
-              -0.0019
+              -0.0093
             ],
-            "vitorias": 63,
+            "vitorias": 62,
             "empates": 47,
-            "derrotas": 70
+            "derrotas": 71
           },
           "diversificacao_portfolio": {
-            "diferenca_media_vs_ecg_original": -0.01,
+            "diferenca_media_vs_ecg_original": -0.0104,
             "ic95_bootstrap_blocos_vs_original": [
-              -0.0363,
-              0.0219
+              -0.0367,
+              0.0211
             ],
-            "descoberta_diferenca_media": -0.0144,
-            "confirmacao_diferenca_media": -0.0011,
+            "descoberta_diferenca_media": -0.0161,
+            "confirmacao_diferenca_media": 0.0011,
             "ic98_33_bootstrap_blocos_confirmacao": [
-              -0.0422,
-              0.0444
+              -0.0456,
+              0.0478
             ],
             "sementes_com_diferenca_positiva": 2,
             "diferencas_por_semente": [
-              -0.0278,
-              -0.0056,
-              0.0074,
+              -0.0315,
+              -0.0074,
+              0.0093,
               0.0056,
-              -0.0296
+              -0.0278
             ],
             "vitorias": 76,
             "empates": 33,
@@ -183,31 +183,31 @@
         },
         "comparacao_vs_aleatorio": {
           "ecg_original": {
-            "diferenca_media_vs_aleatorio": 0.0296,
+            "diferenca_media_vs_aleatorio": 0.0307,
             "ic95_bootstrap_blocos": [
-              -0.0881,
-              0.1485
+              -0.0885,
+              0.1444
             ]
           },
           "recencia_reforcada": {
-            "diferenca_media_vs_aleatorio": 0.0281,
+            "diferenca_media_vs_aleatorio": 0.0274,
             "ic95_bootstrap_blocos": [
-              -0.0885,
-              0.1393
+              -0.0956,
+              0.1404
             ]
           },
           "equilibrio_estrutural": {
-            "diferenca_media_vs_aleatorio": 0.0252,
+            "diferenca_media_vs_aleatorio": 0.0226,
             "ic95_bootstrap_blocos": [
-              -0.0933,
-              0.1411
+              -0.0941,
+              0.1385
             ]
           },
           "diversificacao_portfolio": {
-            "diferenca_media_vs_aleatorio": 0.0196,
+            "diferenca_media_vs_aleatorio": 0.0204,
             "ic95_bootstrap_blocos": [
               -0.0896,
-              0.1333
+              0.1322
             ]
           }
         },
@@ -237,7 +237,7 @@
           "titulo": "Preservar a separação entre histórico e janela recente",
           "prioridade": "Alta",
           "hipotese": "Acompanhar se as frequências recentes diferem do histórico sem transformar oscilações em previsão.",
-          "evidencia": "Foram analisados 3833 concursos. A janela recente contém 30 concursos; o ranking completo contém 15 dezenas destacadas.",
+          "evidencia": "Foram analisados 3834 concursos. A janela recente contém 30 concursos; o ranking completo contém 15 dezenas destacadas.",
           "backtest": "Análise descritiva; não constitui teste de capacidade preditiva.",
           "limitacoes": "Frequências variam naturalmente em sorteios independentes. Rankings podem mudar com o tamanho da janela.",
           "proximo_teste": "Comparar rankings em janelas de 30, 50 e 100 concursos e registrar a estabilidade antes de qualquer alteração no gerador."
@@ -246,7 +246,7 @@
           "titulo": "Monitorar a concentração do ranking recente",
           "prioridade": "Monitorar",
           "hipotese": "Verificar se as dezenas mais frequentes na janela curta permanecem estáveis em janelas maiores.",
-          "evidencia": "Top 5 na janela de 30 concursos: 13 (22), 15 (22), 16 (21), 23 (21), 24 (21). Valores representam contagens observadas, não probabilidades futuras.",
+          "evidencia": "Top 5 na janela de 30 concursos: 13 (23), 15 (22), 23 (21), 24 (21), 25 (21). Valores representam contagens observadas, não probabilidades futuras.",
           "backtest": "Comparação descritiva entre contagens; não demonstra vantagem sobre sorteio uniforme.",
           "limitacoes": "Janela curta tem maior variabilidade e pode destacar extremos por acaso. Não selecionar dezenas apenas por este ranking.",
           "proximo_teste": "Recalcular a posição dessas dezenas nas janelas de 50 e 100 concursos e medir a persistência do ranking."
@@ -255,7 +255,7 @@
           "titulo": "Acompanhar o backtesting walk-forward",
           "prioridade": "Alta",
           "hipotese": "Manter a avaliação temporal como critério obrigatório antes de aprovar mudanças no método estatístico.",
-          "evidencia": "Janela de treinamento 30; 100 concursos de teste; média observada 9.12 acertos; referência aleatória esperada 9; diferença +0.12.",
+          "evidencia": "Janela de treinamento 30; 100 concursos de teste; média observada 9.11 acertos; referência aleatória esperada 9; diferença +0.11.",
           "backtest": "Resultado calculado em sequência temporal, usando somente concursos anteriores no treinamento. A referência informada é a esperança matemática de uma seleção uniforme.",
           "limitacoes": "O valor esperado não substitui uma simulação de distribuição nem intervalo de confiança. Diferença observada não comprova superioridade; há risco de sobreajuste e múltiplas comparações.",
           "proximo_teste": "Executar simulações aleatórias com o mesmo número de testes, calcular distribuição de resultados e repetir em períodos futuros sem reajustar parâmetros."
@@ -264,7 +264,7 @@
           "titulo": "Pesquisa robusta: replicação independente do gerador",
           "prioridade": "Manter método atual",
           "hipotese": "Verificar se variantes completas superam o ECG original em descoberta e em um bloco cronológico de confirmação não usado para ajuste.",
-          "evidencia": "Protocolo ECG-ROBUST-1; 180 concursos; 120 de descoberta e 60 de confirmação. Variantes que passaram: nenhuma. ecg_original: diferença média vs original 0; descoberta 0; confirmação intocada 0; IC confirmação [0, 0]; sementes positivas 0/5. recencia_reforcada: diferença média vs original -0.0015; descoberta 0.0122; confirmação intocada -0.0289; IC confirmação [-0.0789, 0.0267]; sementes positivas 3/5. equilibrio_estrutural: diferença média vs original -0.0044; descoberta -0.0011; confirmação intocada -0.0111; IC confirmação [-0.04, 0.02]; sementes positivas 2/5. diversificacao_portfolio: diferença média vs original -0.01; descoberta -0.0144; confirmação intocada -0.0011; IC confirmação [-0.0422, 0.0444]; sementes positivas 2/5.",
+          "evidencia": "Protocolo ECG-ROBUST-1; 180 concursos; 120 de descoberta e 60 de confirmação. Variantes que passaram: nenhuma. ecg_original: diferença média vs original 0; descoberta 0; confirmação intocada 0; IC confirmação [0, 0]; sementes positivas 0/5. recencia_reforcada: diferença média vs original -0.0033; descoberta 0.0067; confirmação intocada -0.0233; IC confirmação [-0.0789, 0.0267]; sementes positivas 4/5. equilibrio_estrutural: diferença média vs original -0.0081; descoberta -0.0067; confirmação intocada -0.0111; IC confirmação [-0.0378, 0.0211]; sementes positivas 2/5. diversificacao_portfolio: diferença média vs original -0.0104; descoberta -0.0161; confirmação intocada 0.0011; IC confirmação [-0.0456, 0.0478]; sementes positivas 2/5.",
           "backtest": "Comparação pareada por concurso, cinco sementes fixas por método, bootstrap em blocos móveis e IC de 98,33% na confirmação para três variantes.",
           "limitacoes": "O bloco de confirmação é retrospectivo e só fica verdadeiramente prospectivo quando concursos futuros forem adicionados sem reajuste de parâmetros. Bootstrap em blocos reduz dependência local, mas não torna sorteios ou janelas temporalmente independentes. Cinco sementes medem sensibilidade à aleatoriedade do gerador, não constituem cinco amostras independentes de sorteios. Múltiplas variantes e métricas ainda podem gerar descobertas ocasionais; só a métrica primária (média de acertos por jogo) determina a regra de promoção. Frequência e estrutura histórica não alteram a probabilidade matemática de uma combinação em sorteios independentes.",
           "proximo_teste": "Exige diferença positiva na descoberta e confirmação, limite inferior do IC 98,33% por blocos acima de zero na confirmação e resultado positivo em pelo menos quatro das cinco sementes. Ainda requer replicação prospectiva e autorização humana."
@@ -273,8 +273,8 @@
       "aviso": "Sorteios são aleatórios e independentes. Frequência, atraso e padrões históricos não aumentam a probabilidade matemática de ganhar."
     },
     "megasena": {
-      "resumo": "Mega-Sena: laboratório estatístico local em 3087 concursos. Experimentos independentes e temporais são exploratórios; não preveem sorteios.",
-      "concursos_analisados": 3087,
+      "resumo": "Mega-Sena: laboratório estatístico local em 3088 concursos. Experimentos independentes e temporais são exploratórios; não preveem sorteios.",
+      "concursos_analisados": 3088,
       "fonte": "https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena",
       "experimentos": {
         "status": "concluido",
@@ -284,12 +284,12 @@
         "concursos_descoberta": 120,
         "concursos_confirmacao_intocada": 60,
         "periodo_teste": [
-          "30/08/2025",
-          "17/11/2026"
+          "02/09/2025",
+          "19/11/2026"
         ],
         "periodo_confirmacao": [
-          "07/07/2026",
-          "17/11/2026"
+          "09/07/2026",
+          "19/11/2026"
         ],
         "sementes_independentes": [
           11,
@@ -303,36 +303,36 @@
         "limiar_faixa_minima": 4,
         "estrategias": {
           "ecg_original": {
-            "media_acertos_por_jogo": 0.5707,
-            "media_melhor_jogo_por_concurso": 1.0756,
+            "media_acertos_por_jogo": 0.5726,
+            "media_melhor_jogo_por_concurso": 1.0767,
             "pct_concursos_com_algum_jogo_faixa_minima": 0,
             "media_jogos_faixa_minima_por_concurso": 0,
             "concursos_teste": 180
           },
           "recencia_reforcada": {
-            "media_acertos_por_jogo": 0.5696,
-            "media_melhor_jogo_por_concurso": 1.07,
+            "media_acertos_por_jogo": 0.5722,
+            "media_melhor_jogo_por_concurso": 1.0733,
             "pct_concursos_com_algum_jogo_faixa_minima": 0.111,
             "media_jogos_faixa_minima_por_concurso": 0.0011,
             "concursos_teste": 180
           },
           "equilibrio_estrutural": {
-            "media_acertos_por_jogo": 0.5704,
-            "media_melhor_jogo_por_concurso": 1.0856,
+            "media_acertos_por_jogo": 0.5719,
+            "media_melhor_jogo_por_concurso": 1.0867,
             "pct_concursos_com_algum_jogo_faixa_minima": 0,
             "media_jogos_faixa_minima_por_concurso": 0,
             "concursos_teste": 180
           },
           "diversificacao_portfolio": {
-            "media_acertos_por_jogo": 0.5833,
-            "media_melhor_jogo_por_concurso": 1.1189,
+            "media_acertos_por_jogo": 0.5848,
+            "media_melhor_jogo_por_concurso": 1.12,
             "pct_concursos_com_algum_jogo_faixa_minima": 0,
             "media_jogos_faixa_minima_por_concurso": 0,
             "concursos_teste": 180
           },
           "aleatorio_uniforme": {
-            "media_acertos_por_jogo": 0.6074,
-            "media_melhor_jogo_por_concurso": 1.1944,
+            "media_acertos_por_jogo": 0.6067,
+            "media_melhor_jogo_por_concurso": 1.1922,
             "pct_concursos_com_algum_jogo_faixa_minima": 0.333,
             "media_jogos_faixa_minima_por_concurso": 0.0033,
             "concursos_teste": 180
@@ -364,60 +364,60 @@
             "derrotas": 0
           },
           "recencia_reforcada": {
-            "diferenca_media_vs_ecg_original": -0.0011,
+            "diferenca_media_vs_ecg_original": -0.0004,
             "ic95_bootstrap_blocos_vs_original": [
-              -0.023,
-              0.0207
+              -0.0226,
+              0.0215
             ],
-            "descoberta_diferenca_media": 0.0039,
-            "confirmacao_diferenca_media": -0.0111,
+            "descoberta_diferenca_media": 0.0028,
+            "confirmacao_diferenca_media": -0.0067,
             "ic98_33_bootstrap_blocos_confirmacao": [
               -0.0556,
-              0.02
+              0.0222
             ],
-            "sementes_com_diferenca_positiva": 2,
+            "sementes_com_diferenca_positiva": 3,
             "diferencas_por_semente": [
               -0.0019,
-              0.0167,
-              0,
-              0.0093,
+              0.0185,
+              0.0037,
+              0.0074,
               -0.0296
             ],
-            "vitorias": 68,
-            "empates": 37,
+            "vitorias": 69,
+            "empates": 36,
             "derrotas": 75
           },
           "equilibrio_estrutural": {
-            "diferenca_media_vs_ecg_original": -0.0004,
+            "diferenca_media_vs_ecg_original": -0.0007,
             "ic95_bootstrap_blocos_vs_original": [
               -0.0078,
               0.0074
             ],
-            "descoberta_diferenca_media": 0.0039,
+            "descoberta_diferenca_media": 0.0033,
             "confirmacao_diferenca_media": -0.0089,
             "ic98_33_bootstrap_blocos_confirmacao": [
-              -0.0289,
-              0.0133
+              -0.03,
+              0.0122
             ],
             "sementes_com_diferenca_positiva": 2,
             "diferencas_por_semente": [
               0.0148,
-              -0.0074,
+              -0.0093,
               -0.0019,
               0.0019,
               -0.0093
             ],
-            "vitorias": 31,
-            "empates": 119,
+            "vitorias": 30,
+            "empates": 120,
             "derrotas": 30
           },
           "diversificacao_portfolio": {
-            "diferenca_media_vs_ecg_original": 0.0126,
+            "diferenca_media_vs_ecg_original": 0.0122,
             "ic95_bootstrap_blocos_vs_original": [
-              0.0026,
-              0.0226
+              0.003,
+              0.0219
             ],
-            "descoberta_diferenca_media": 0.0139,
+            "descoberta_diferenca_media": 0.0133,
             "confirmacao_diferenca_media": 0.01,
             "ic98_33_bootstrap_blocos_confirmacao": [
               -0.0111,
@@ -427,42 +427,42 @@
             "diferencas_por_semente": [
               0.0167,
               0.0056,
-              0.0204,
+              0.0185,
               0.0093,
               0.0111
             ],
-            "vitorias": 55,
-            "empates": 95,
+            "vitorias": 54,
+            "empates": 96,
             "derrotas": 30
           }
         },
         "comparacao_vs_aleatorio": {
           "ecg_original": {
-            "diferenca_media_vs_aleatorio": -0.0367,
+            "diferenca_media_vs_aleatorio": -0.0341,
             "ic95_bootstrap_blocos": [
-              -0.0689,
-              0.0096
+              -0.0693,
+              0.0089
             ]
           },
           "recencia_reforcada": {
-            "diferenca_media_vs_aleatorio": -0.0378,
+            "diferenca_media_vs_aleatorio": -0.0344,
             "ic95_bootstrap_blocos": [
-              -0.0807,
-              0.0193
+              -0.0781,
+              0.0174
             ]
           },
           "equilibrio_estrutural": {
-            "diferenca_media_vs_aleatorio": -0.037,
+            "diferenca_media_vs_aleatorio": -0.0348,
             "ic95_bootstrap_blocos": [
-              -0.0663,
-              0.0078
+              -0.0674,
+              0.007
             ]
           },
           "diversificacao_portfolio": {
-            "diferenca_media_vs_aleatorio": -0.0241,
+            "diferenca_media_vs_aleatorio": -0.0219,
             "ic95_bootstrap_blocos": [
-              -0.0611,
-              0.0233
+              -0.0589,
+              0.02
             ]
           }
         },
@@ -492,7 +492,7 @@
           "titulo": "Preservar a separação entre histórico e janela recente",
           "prioridade": "Alta",
           "hipotese": "Acompanhar se as frequências recentes diferem do histórico sem transformar oscilações em previsão.",
-          "evidencia": "Foram analisados 3087 concursos. A janela recente contém 30 concursos; o ranking completo contém 15 dezenas destacadas.",
+          "evidencia": "Foram analisados 3088 concursos. A janela recente contém 30 concursos; o ranking completo contém 15 dezenas destacadas.",
           "backtest": "Análise descritiva; não constitui teste de capacidade preditiva.",
           "limitacoes": "Frequências variam naturalmente em sorteios independentes. Rankings podem mudar com o tamanho da janela.",
           "proximo_teste": "Comparar rankings em janelas de 30, 50 e 100 concursos e registrar a estabilidade antes de qualquer alteração no gerador."
@@ -501,7 +501,7 @@
           "titulo": "Monitorar a concentração do ranking recente",
           "prioridade": "Monitorar",
           "hipotese": "Verificar se as dezenas mais frequentes na janela curta permanecem estáveis em janelas maiores.",
-          "evidencia": "Top 5 na janela de 30 concursos: 10 (7), 06 (6), 38 (6), 57 (6), 04 (5). Valores representam contagens observadas, não probabilidades futuras.",
+          "evidencia": "Top 5 na janela de 30 concursos: 10 (8), 06 (6), 38 (6), 04 (5), 05 (5). Valores representam contagens observadas, não probabilidades futuras.",
           "backtest": "Comparação descritiva entre contagens; não demonstra vantagem sobre sorteio uniforme.",
           "limitacoes": "Janela curta tem maior variabilidade e pode destacar extremos por acaso. Não selecionar dezenas apenas por este ranking.",
           "proximo_teste": "Recalcular a posição dessas dezenas nas janelas de 50 e 100 concursos e medir a persistência do ranking."
@@ -510,7 +510,7 @@
           "titulo": "Acompanhar o backtesting walk-forward",
           "prioridade": "Alta",
           "hipotese": "Manter a avaliação temporal como critério obrigatório antes de aprovar mudanças no método estatístico.",
-          "evidencia": "Janela de treinamento 30; 100 concursos de teste; média observada 0.53 acertos; referência aleatória esperada 0.6; diferença -0.07.",
+          "evidencia": "Janela de treinamento 30; 100 concursos de teste; média observada 0.54 acertos; referência aleatória esperada 0.6; diferença -0.06.",
           "backtest": "Resultado calculado em sequência temporal, usando somente concursos anteriores no treinamento. A referência informada é a esperança matemática de uma seleção uniforme.",
           "limitacoes": "O valor esperado não substitui uma simulação de distribuição nem intervalo de confiança. Diferença observada não comprova superioridade; há risco de sobreajuste e múltiplas comparações.",
           "proximo_teste": "Executar simulações aleatórias com o mesmo número de testes, calcular distribuição de resultados e repetir em períodos futuros sem reajustar parâmetros."
@@ -519,7 +519,7 @@
           "titulo": "Pesquisa robusta: replicação independente do gerador",
           "prioridade": "Manter método atual",
           "hipotese": "Verificar se variantes completas superam o ECG original em descoberta e em um bloco cronológico de confirmação não usado para ajuste.",
-          "evidencia": "Protocolo ECG-ROBUST-1; 180 concursos; 120 de descoberta e 60 de confirmação. Variantes que passaram: nenhuma. ecg_original: diferença média vs original 0; descoberta 0; confirmação intocada 0; IC confirmação [0, 0]; sementes positivas 0/5. recencia_reforcada: diferença média vs original -0.0011; descoberta 0.0039; confirmação intocada -0.0111; IC confirmação [-0.0556, 0.02]; sementes positivas 2/5. equilibrio_estrutural: diferença média vs original -0.0004; descoberta 0.0039; confirmação intocada -0.0089; IC confirmação [-0.0289, 0.0133]; sementes positivas 2/5. diversificacao_portfolio: diferença média vs original 0.0126; descoberta 0.0139; confirmação intocada 0.01; IC confirmação [-0.0111, 0.0256]; sementes positivas 5/5.",
+          "evidencia": "Protocolo ECG-ROBUST-1; 180 concursos; 120 de descoberta e 60 de confirmação. Variantes que passaram: nenhuma. ecg_original: diferença média vs original 0; descoberta 0; confirmação intocada 0; IC confirmação [0, 0]; sementes positivas 0/5. recencia_reforcada: diferença média vs original -0.0004; descoberta 0.0028; confirmação intocada -0.0067; IC confirmação [-0.0556, 0.0222]; sementes positivas 3/5. equilibrio_estrutural: diferença média vs original -0.0007; descoberta 0.0033; confirmação intocada -0.0089; IC confirmação [-0.03, 0.0122]; sementes positivas 2/5. diversificacao_portfolio: diferença média vs original 0.0122; descoberta 0.0133; confirmação intocada 0.01; IC confirmação [-0.0111, 0.0256]; sementes positivas 5/5.",
           "backtest": "Comparação pareada por concurso, cinco sementes fixas por método, bootstrap em blocos móveis e IC de 98,33% na confirmação para três variantes.",
           "limitacoes": "O bloco de confirmação é retrospectivo e só fica verdadeiramente prospectivo quando concursos futuros forem adicionados sem reajuste de parâmetros. Bootstrap em blocos reduz dependência local, mas não torna sorteios ou janelas temporalmente independentes. Cinco sementes medem sensibilidade à aleatoriedade do gerador, não constituem cinco amostras independentes de sorteios. Múltiplas variantes e métricas ainda podem gerar descobertas ocasionais; só a métrica primária (média de acertos por jogo) determina a regra de promoção. Frequência e estrutura histórica não alteram a probabilidade matemática de uma combinação em sorteios independentes.",
           "proximo_teste": "Exige diferença positiva na descoberta e confirmação, limite inferior do IC 98,33% por blocos acima de zero na confirmação e resultado positivo em pelo menos quatro das cinco sementes. Ainda requer replicação prospectiva e autorização humana."
