@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-24T05:16:30.073011+00:00",
+  "generated_at": "2026-11-25T04:05:52.996304+00:00",
   "source": "Feed histórico público com conferência do último concurso e preenchimento incremental via endpoint público do Portal Loterias CAIXA.",
   "notice": "Estatística descritiva, não preditiva. Frequência e atraso não alteram a probabilidade matemática de sorteios futuros.",
   "games": {
@@ -220,8 +220,8 @@
       "contest": 3836,
       "date": "23/11/2026",
       "draw_count": 3836,
-      "feed_previous_latest": 3835,
-      "history_gap_filled": 1,
+      "feed_previous_latest": 3836,
+      "history_gap_filled": 0,
       "official_source": "https://servicebus2.caixa.gov.br/portaldeloterias/api/lotofacil",
       "top15": [
         {
