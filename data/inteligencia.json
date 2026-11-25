@@ -1,6 +1,6 @@
 {
   "schema_version": 3,
-  "gerado_em": "2026-11-24T05:20:15.521Z",
+  "gerado_em": "2026-11-25T04:13:07.305Z",
   "fonte_dados": "Feed histórico público com conferência do último concurso e preenchimento incremental via endpoint público do Portal Loterias CAIXA.",
   "status_ia": "gerado_localmente",
   "modelo": "ECG Laboratório Estatístico Local v3",
