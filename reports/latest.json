@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-26T03:29:19.115282+00:00",
+  "generated_at": "2026-11-27T03:36:22.422427+00:00",
   "source": "Feed histórico público com conferência do último concurso e preenchimento incremental via endpoint público do Portal Loterias CAIXA.",
   "notice": "Estatística descritiva, não preditiva. Frequência e atraso não alteram a probabilidade matemática de sorteios futuros.",
   "games": {
@@ -14,12 +14,12 @@
         "concursos_descoberta": 120,
         "concursos_confirmacao_intocada": 60,
         "periodo_teste": [
-          "10/04/2026",
-          "24/11/2026"
+          "11/04/2026",
+          "25/11/2026"
         ],
         "periodo_confirmacao": [
-          "02/09/2026",
-          "24/11/2026"
+          "03/09/2026",
+          "25/11/2026"
         ],
         "sementes_independentes": [
           11,
@@ -33,38 +33,38 @@
         "limiar_faixa_minima": 11,
         "estrategias": {
           "ecg_original": {
-            "media_acertos_por_jogo": 9.0259,
-            "media_melhor_jogo_por_concurso": 9.9022,
+            "media_acertos_por_jogo": 9.0263,
+            "media_melhor_jogo_por_concurso": 9.9044,
             "pct_concursos_com_algum_jogo_faixa_minima": 29.111,
             "media_jogos_faixa_minima_por_concurso": 0.3567,
             "concursos_teste": 180
           },
           "recencia_reforcada": {
-            "media_acertos_por_jogo": 9.0215,
-            "media_melhor_jogo_por_concurso": 9.8844,
-            "pct_concursos_com_algum_jogo_faixa_minima": 27.556,
-            "media_jogos_faixa_minima_por_concurso": 0.3389,
+            "media_acertos_por_jogo": 9.0226,
+            "media_melhor_jogo_por_concurso": 9.8878,
+            "pct_concursos_com_algum_jogo_faixa_minima": 27.667,
+            "media_jogos_faixa_minima_por_concurso": 0.3411,
             "concursos_teste": 180
           },
           "equilibrio_estrutural": {
-            "media_acertos_por_jogo": 9.0207,
-            "media_melhor_jogo_por_concurso": 9.8678,
-            "pct_concursos_com_algum_jogo_faixa_minima": 27.778,
-            "media_jogos_faixa_minima_por_concurso": 0.3456,
+            "media_acertos_por_jogo": 9.0222,
+            "media_melhor_jogo_por_concurso": 9.8711,
+            "pct_concursos_com_algum_jogo_faixa_minima": 27.889,
+            "media_jogos_faixa_minima_por_concurso": 0.3467,
             "concursos_teste": 180
           },
           "diversificacao_portfolio": {
-            "media_acertos_por_jogo": 9.02,
-            "media_melhor_jogo_por_concurso": 9.9144,
+            "media_acertos_por_jogo": 9.0204,
+            "media_melhor_jogo_por_concurso": 9.9156,
             "pct_concursos_com_algum_jogo_faixa_minima": 28.444,
             "media_jogos_faixa_minima_por_concurso": 0.3411,
             "concursos_teste": 180
           },
           "aleatorio_uniforme": {
-            "media_acertos_por_jogo": 9.0056,
-            "media_melhor_jogo_por_concurso": 10.0433,
-            "pct_concursos_com_algum_jogo_faixa_minima": 29.333,
-            "media_jogos_faixa_minima_por_concurso": 0.34,
+            "media_acertos_por_jogo": 9.0041,
+            "media_melhor_jogo_por_concurso": 10.0456,
+            "pct_concursos_com_algum_jogo_faixa_minima": 29.444,
+            "media_jogos_faixa_minima_por_concurso": 0.3411,
             "concursos_teste": 180
           }
         },
@@ -94,22 +94,22 @@
             "derrotas": 0
           },
           "recencia_reforcada": {
-            "diferenca_media_vs_ecg_original": -0.0044,
+            "diferenca_media_vs_ecg_original": -0.0037,
             "ic95_bootstrap_blocos_vs_original": [
-              -0.03,
-              0.0196
+              -0.0296,
+              0.0204
             ],
-            "descoberta_diferenca_media": 0.0072,
-            "confirmacao_diferenca_media": -0.0278,
+            "descoberta_diferenca_media": 0.0078,
+            "confirmacao_diferenca_media": -0.0267,
             "ic98_33_bootstrap_blocos_confirmacao": [
-              -0.0822,
-              0.0167
+              -0.0833,
+              0.0133
             ],
             "sementes_com_diferenca_positiva": 4,
             "diferencas_por_semente": [
-              0.0222,
-              0.013,
-              0.0037,
+              0.0204,
+              0.0204,
+              0.0019,
               -0.0685,
               0.0074
             ],
@@ -118,48 +118,48 @@
             "derrotas": 79
           },
           "equilibrio_estrutural": {
-            "diferenca_media_vs_ecg_original": -0.0052,
+            "diferenca_media_vs_ecg_original": -0.0041,
             "ic95_bootstrap_blocos_vs_original": [
-              -0.0211,
-              0.0148
+              -0.0196,
+              0.0156
             ],
-            "descoberta_diferenca_media": 0.0006,
-            "confirmacao_diferenca_media": -0.0167,
+            "descoberta_diferenca_media": 0.0011,
+            "confirmacao_diferenca_media": -0.0144,
             "ic98_33_bootstrap_blocos_confirmacao": [
-              -0.0344,
-              0.0211
+              -0.0378,
+              0.0233
             ],
             "sementes_com_diferenca_positiva": 2,
             "diferencas_por_semente": [
-              0.0019,
-              -0.0352,
+              0.0037,
+              -0.0315,
               0.0204,
-              -0.0093,
-              -0.0037
+              -0.0111,
+              -0.0019
             ],
-            "vitorias": 63,
+            "vitorias": 64,
             "empates": 47,
-            "derrotas": 70
+            "derrotas": 69
           },
           "diversificacao_portfolio": {
             "diferenca_media_vs_ecg_original": -0.0059,
             "ic95_bootstrap_blocos_vs_original": [
-              -0.0385,
-              0.0204
+              -0.037,
+              0.0219
             ],
-            "descoberta_diferenca_media": -0.0083,
-            "confirmacao_diferenca_media": -0.0011,
+            "descoberta_diferenca_media": -0.0111,
+            "confirmacao_diferenca_media": 0.0044,
             "ic98_33_bootstrap_blocos_confirmacao": [
-              -0.05,
-              0.0467
+              -0.0511,
+              0.0456
             ],
             "sementes_com_diferenca_positiva": 2,
             "diferencas_por_semente": [
-              -0.0296,
-              -0.0056,
+              -0.0278,
+              -0.0037,
               0.013,
               0.0148,
-              -0.0222
+              -0.0259
             ],
             "vitorias": 78,
             "empates": 34,
@@ -168,31 +168,31 @@
         },
         "comparacao_vs_aleatorio": {
           "ecg_original": {
-            "diferenca_media_vs_aleatorio": 0.0204,
+            "diferenca_media_vs_aleatorio": 0.0222,
             "ic95_bootstrap_blocos": [
-              -0.097,
-              0.1419
+              -0.0948,
+              0.1393
             ]
           },
           "recencia_reforcada": {
-            "diferenca_media_vs_aleatorio": 0.0159,
+            "diferenca_media_vs_aleatorio": 0.0185,
             "ic95_bootstrap_blocos": [
-              -0.0944,
-              0.1278
+              -0.0937,
+              0.1341
             ]
           },
           "equilibrio_estrutural": {
-            "diferenca_media_vs_aleatorio": 0.0152,
+            "diferenca_media_vs_aleatorio": 0.0181,
             "ic95_bootstrap_blocos": [
               -0.0993,
-              0.1385
+              0.1396
             ]
           },
           "diversificacao_portfolio": {
-            "diferenca_media_vs_aleatorio": 0.0144,
+            "diferenca_media_vs_aleatorio": 0.0163,
             "ic95_bootstrap_blocos": [
-              -0.0974,
-              0.1256
+              -0.0944,
+              0.1241
             ]
           }
         },
@@ -217,52 +217,52 @@
           "Frequência e estrutura histórica não alteram a probabilidade matemática de uma combinação em sorteios independentes."
         ]
       },
-      "contest": 3837,
-      "date": "24/11/2026",
-      "draw_count": 3837,
-      "feed_previous_latest": 3837,
+      "contest": 3838,
+      "date": "25/11/2026",
+      "draw_count": 3838,
+      "feed_previous_latest": 3838,
       "history_gap_filled": 0,
       "official_source": "https://servicebus2.caixa.gov.br/portaldeloterias/api/lotofacil",
       "top15": [
         {
           "number": 20,
-          "count": 2392,
+          "count": 2393,
           "last100": 0
         },
         {
           "number": 25,
-          "count": 2383,
-          "last100": 0
+          "count": 2384,
+          "last100": 61
         },
         {
           "number": 10,
-          "count": 2378,
+          "count": 2379,
           "last100": 0
         },
         {
           "number": 11,
-          "count": 2361,
+          "count": 2362,
           "last100": 64
         },
         {
           "number": 13,
-          "count": 2339,
+          "count": 2340,
           "last100": 64
         },
         {
           "number": 24,
           "count": 2335,
-          "last100": 68
+          "last100": 67
         },
         {
           "number": 1,
-          "count": 2324,
-          "last100": 0
+          "count": 2325,
+          "last100": 60
         },
         {
           "number": 4,
           "count": 2319,
-          "last100": 63
+          "last100": 62
         },
         {
           "number": 14,
@@ -272,26 +272,26 @@
         {
           "number": 3,
           "count": 2316,
-          "last100": 65
+          "last100": 64
         },
         {
           "number": 5,
-          "count": 2313,
+          "count": 2314,
           "last100": 66
         },
         {
           "number": 12,
-          "count": 2307,
-          "last100": 61
+          "count": 2308,
+          "last100": 62
         },
         {
           "number": 15,
-          "count": 2300,
-          "last100": 68
+          "count": 2301,
+          "last100": 69
         },
         {
           "number": 2,
-          "count": 2291,
+          "count": 2292,
           "last100": 0
         },
         {
@@ -302,43 +302,43 @@
       ],
       "overdue10": [
         {
-          "number": 1,
-          "draws": 5
-        },
-        {
           "number": 6,
-          "draws": 3
-        },
-        {
-          "number": 13,
-          "draws": 2
+          "draws": 4
         },
         {
           "number": 18,
-          "draws": 2
-        },
-        {
-          "number": 2,
-          "draws": 1
+          "draws": 3
         },
         {
           "number": 9,
-          "draws": 1
-        },
-        {
-          "number": 12,
-          "draws": 1
-        },
-        {
-          "number": 15,
-          "draws": 1
+          "draws": 2
         },
         {
           "number": 19,
-          "draws": 1
+          "draws": 2
         },
         {
           "number": 21,
+          "draws": 2
+        },
+        {
+          "number": 3,
+          "draws": 1
+        },
+        {
+          "number": 4,
+          "draws": 1
+        },
+        {
+          "number": 14,
+          "draws": 1
+        },
+        {
+          "number": 22,
+          "draws": 1
+        },
+        {
+          "number": 24,
           "draws": 1
         }
       ],
@@ -351,6 +351,10 @@
               "count": 23
             },
             {
+              "number": 16,
+              "count": 22
+            },
+            {
               "number": 17,
               "count": 22
             },
@@ -359,19 +363,19 @@
               "count": 21
             },
             {
-              "number": 16,
-              "count": 21
-            },
-            {
-              "number": 22,
-              "count": 21
-            },
-            {
               "number": 23,
+              "count": 21
+            },
+            {
+              "number": 5,
               "count": 20
             },
             {
-              "number": 24,
+              "number": 22,
+              "count": 20
+            },
+            {
+              "number": 25,
               "count": 20
             },
             {
@@ -379,19 +383,11 @@
               "count": 19
             },
             {
-              "number": 5,
-              "count": 19
-            },
-            {
-              "number": 18,
-              "count": 19
-            },
-            {
               "number": 20,
               "count": 19
             },
             {
-              "number": 25,
+              "number": 24,
               "count": 19
             },
             {
@@ -399,11 +395,15 @@
               "count": 18
             },
             {
-              "number": 19,
+              "number": 11,
               "count": 18
             },
             {
-              "number": 11,
+              "number": 18,
+              "count": 18
+            },
+            {
+              "number": 12,
               "count": 17
             }
           ]
@@ -413,22 +413,22 @@
           "top15": [
             {
               "number": 15,
-              "count": 36
+              "count": 37
+            },
+            {
+              "number": 13,
+              "count": 35
             },
             {
               "number": 19,
               "count": 35
             },
             {
-              "number": 13,
-              "count": 34
+              "number": 23,
+              "count": 33
             },
             {
               "number": 24,
-              "count": 34
-            },
-            {
-              "number": 23,
               "count": 33
             },
             {
@@ -437,6 +437,10 @@
             },
             {
               "number": 6,
+              "count": 32
+            },
+            {
+              "number": 11,
               "count": 32
             },
             {
@@ -452,10 +456,6 @@
               "count": 31
             },
             {
-              "number": 11,
-              "count": 31
-            },
-            {
               "number": 5,
               "count": 30
             },
@@ -468,8 +468,8 @@
               "count": 30
             },
             {
-              "number": 4,
-              "count": 29
+              "number": 25,
+              "count": 30
             }
           ]
         },
@@ -478,11 +478,11 @@
           "top15": [
             {
               "number": 15,
-              "count": 68
+              "count": 69
             },
             {
               "number": 24,
-              "count": 68
+              "count": 67
             },
             {
               "number": 5,
@@ -490,7 +490,7 @@
             },
             {
               "number": 3,
-              "count": 65
+              "count": 64
             },
             {
               "number": 11,
@@ -505,11 +505,15 @@
               "count": 64
             },
             {
-              "number": 4,
+              "number": 16,
               "count": 63
             },
             {
-              "number": 16,
+              "number": 4,
+              "count": 62
+            },
+            {
+              "number": 12,
               "count": 62
             },
             {
@@ -517,8 +521,12 @@
               "count": 62
             },
             {
-              "number": 12,
+              "number": 25,
               "count": 61
+            },
+            {
+              "number": 1,
+              "count": 60
             },
             {
               "number": 6,
@@ -527,55 +535,47 @@
             {
               "number": 8,
               "count": 60
-            },
-            {
-              "number": 9,
-              "count": 60
-            },
-            {
-              "number": 21,
-              "count": 60
             }
           ]
         }
       },
-      "average_even": 7.19,
+      "average_even": 7.189,
       "expected_even": 7.2,
-      "average_low": 7.204,
-      "average_high": 7.796,
-      "average_sum": 195.167,
-      "sum_stddev": 17.82,
+      "average_low": 7.205,
+      "average_high": 7.795,
+      "average_sum": 195.164,
+      "sum_stddev": 17.819,
       "average_range": 22.789,
       "average_repeats": 8.974,
       "distribution_by_band": {
-        "01-05": 11563,
-        "06-10": 11412,
-        "11-15": 11624,
-        "16-20": 11412,
-        "21-25": 11544
+        "01-05": 11566,
+        "06-10": 11415,
+        "11-15": 11628,
+        "16-20": 11415,
+        "21-25": 11546
       },
       "backtesting": [
         {
           "janela_treinamento": 30,
           "concursos_teste": 100,
-          "media_acertos": 9.1,
+          "media_acertos": 9.12,
           "baseline_aleatorio_esperado": 9.0,
-          "diferenca_vs_baseline": 0.1,
+          "diferenca_vs_baseline": 0.12,
           "periodo_teste": [
-            "17/07/2026",
-            "24/11/2026"
+            "19/07/2026",
+            "25/11/2026"
           ],
           "regra": "Treinamento usa somente concursos anteriores ao concurso testado; empate resolvido pela menor dezena."
         },
         {
           "janela_treinamento": 100,
           "concursos_teste": 100,
-          "media_acertos": 9.02,
+          "media_acertos": 8.99,
           "baseline_aleatorio_esperado": 9.0,
-          "diferenca_vs_baseline": 0.02,
+          "diferenca_vs_baseline": -0.01,
           "periodo_teste": [
-            "17/07/2026",
-            "24/11/2026"
+            "19/07/2026",
+            "25/11/2026"
           ],
           "regra": "Treinamento usa somente concursos anteriores ao concurso testado; empate resolvido pela menor dezena."
         },
@@ -586,8 +586,8 @@
           "baseline_aleatorio_esperado": 9.0,
           "diferenca_vs_baseline": -0.09,
           "periodo_teste": [
-            "17/07/2026",
-            "24/11/2026"
+            "19/07/2026",
+            "25/11/2026"
           ],
           "regra": "Treinamento usa somente concursos anteriores ao concurso testado; empate resolvido pela menor dezena."
         }
@@ -600,7 +600,7 @@
         },
         {
           "title": "Integridade do histórico",
-          "detail": "CAIXA confirmou o concurso 3837 (24/11/2026); histórico validado com 3837 concursos.",
+          "detail": "CAIXA confirmou o concurso 3838 (25/11/2026); histórico validado com 3838 concursos.",
           "type": "context"
         },
         {
